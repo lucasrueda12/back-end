@@ -10,12 +10,15 @@ class ProductManager {
         const count = list.length;
         return (count > 0) ? list[count - 1].id + 1 : 1;
     } 
+    existProduct = (code, list) => {
+        return ;
+    }
 
-    addProduct = async (title, description, price, thumbnail, code, stock) => {
-        const list = await this.read();
+    addProduct = async ({title, description, price, thumbnail, code, stock}) => {
+        const list = await this.getProducts();
         const newID = this.getNewID(list);
-        const exis = this.existProduct(code, list);
-        if (! exis < 0) {
+        const exis = list.some(el => el.code == code);
+        if (!exis) {
             const newProduct = {
                 id: newID,
                 title: title ?? "",
@@ -29,7 +32,7 @@ class ProductManager {
             await this.write(list);
             return newProduct;
         }
-        return 'ya se encuetra un producto con ese code';
+        return {error: `code: ${code} already exists`};
     }
 
     read = () => {
@@ -48,13 +51,11 @@ class ProductManager {
         fs.promises.writeFile(this.path, JSON.stringify(list));
     }
 
-    existProduct = (code, list) => {
-        return list.some(el => el.code === code);
-    }
+    
 
     getProductbyId = async (id) => {
         const list = await this.getProducts();
-        return list.find((prod) => prod.id == id) ?? "Not Found";
+        return list.find((prod) => prod.id == id) ?? {error: `product not found`};;
     }
 
     updateProduct = async (id, campo, update) => {
