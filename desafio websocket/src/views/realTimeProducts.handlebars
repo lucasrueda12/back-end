@@ -1,0 +1,56 @@
+<div>
+    <header>
+        <nav>
+            <ul>
+                <li>home</li>
+                <li>products</li>
+                <li>realTimeProducts</li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Rueda libre</h1>
+
+    <div>
+        <p>Elimina un producto segun la id</p>
+        <form action="#" name="delete">
+            <input type="text" name="id">
+            <button id="delete">agregar</button>
+        </form>
+    </div>
+    <div>
+        <p>agrega un producto</p>
+        <form action="#" name="add">
+            <label for=""></label>
+            <input type="text" name="title">
+            <input type="text" name="description">
+            <input type="text" name="price">
+            <input type="text" name="code">
+            <input type="text" name="stock">
+            <input type="text" name="category">
+            <input type="text" name="thumbnails">
+            <button id="add">agregar</button>
+        </form>
+    </div>
+
+    <div class="products">
+        {{#each products}}
+            <div class="product">
+                <p>{{this.title}}</p>
+                <p><b>{{this.price}}</b></p>
+                <p>{{this.description}}</p>
+                <ul>
+                    {{#each this.thumbnail}}
+                        <li><img src={{this.img}} alt=""></li>
+                    {{/each}}
+                </ul>
+                <p>{{this.code}}</p>
+                <p>{{this.stock}}</p>
+                <p>{{this.status}}</p>
+                <p>{{this.category}}</p>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/realTimeProducts.js"></script>
