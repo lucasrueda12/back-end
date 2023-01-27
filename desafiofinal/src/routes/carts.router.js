@@ -8,17 +8,17 @@ const router = Router();
 router.get('/', async (req, res)=>{
     const carts = await cartModel.find().lean().exec();
     
-    return res.json({ carts });
+    return res.render('carts',{carts});
 })
 
 router.get('/:cid', async (req, res)=>{
     const cid = parseInt(req.params.cid);
     const cart = await cartModel.findOne({id: cid}).lean().exec();
-    return res.json({...cart.products});
+    return res.render('carts', {carts: cart.products});
 })
 
 router.post('/', async (req, res)=>{
-    const createCart = await cartModel.create();
+    const createCart = await cartModel.create({});
     res.send({status: 'successful', createCart});
 })
 
@@ -52,7 +52,6 @@ router.delete('/:cid/products/:pid', async (req, res)=>{
     const cart = await cartModel.findOne({id: prodID}).lean().exec();
 
     const idx = cart.products.findIndex(prod => prod.id === prodID);
-    let newcart;
     if(idx != -1){
         cart.products.slice(idx, 1);
     }
