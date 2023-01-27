@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const productCollection = "products"
 
 const productSchema = new mongoose.Schema({
@@ -13,6 +12,6 @@ const productSchema = new mongoose.Schema({
 })
 
 mongoose.set("strictQuery", false)
-const productModel = mongoose.model(productCollection, productSchema)
+const prodModel = mongoose.model(productCollection, productSchema)
 
-export default productModel
+export default prodModel;

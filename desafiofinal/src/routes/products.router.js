@@ -1,6 +1,6 @@
 import { Router } from 'express';
 //import ProductManager from '../manager/ProdMger.js';
-import prodModel from '../models/products.model';
+import prodModel from '../dao/models/products.model.js';
 
 const router = Router();
 //const productManager = new ProductManager('products.json');
@@ -24,7 +24,7 @@ router.get('/', async (req, res)=>{
     }
 })
 
-router.get('/realTimeProducts', async (req, res)=>{
+router.get('/realtimeproducts', async (req, res)=>{
     try {
         const products = await prodModel.find().lean().exec();
         res.render('realTimeProducts', {
@@ -39,20 +39,31 @@ router.get('/:pid', async (req, res)=>{
     try {
         const pid = parseInt(req.params.pid);
         const prod = await prodModel.findOne({id: pid}).lean().exec();
-        res.send({status: 'successful', payload: generatedProduct})
+        res.send({status: 'successful', payload: prod})
     } catch (error) {
         console.log('ERROR: ', error);
     }
 })
 
-router.post('/', async (req, res)=>{
+router.post("/", async (req, res) => {
     try {
-        const prod = req.body;
-        const generatedProduct = await productModel.create(product)
+        const product = req.body
+        if (!product.title) {
+            return res.status(400).json({
+                message: "Error Falta el nombre del producto"
+            })
+        }
+        const productAdded = await prodModel.create(product)
         req.io.emit('updatedProducts', await prodModel.find().lean().exec());
-        res.send({status: 'successful', payload: generatedProduct})
+        res.json({
+            status: "Success",
+            productAdded
+        })
     } catch (error) {
-        console.log('ERROR: ', error);
+        console.log(error)
+        res.json({
+            error
+        })
     }
 })
 
