@@ -5,7 +5,7 @@ import chatRouter from './routes/chat.router.js';
 
 const run = (io, app)=>{
     // middleware
-    
+    // enviamos el socket por peticion
     app.use((req, res, next) =>{
         req.io = io;
         next();
@@ -13,7 +13,7 @@ const run = (io, app)=>{
     
     // routes
 
-    app.get('/', (req, res)=> res.render('home', {}))
+    app.get('/', (req, res)=> res.render('home', {style: 'home.css'}))
     
     app.use('/api/products', prodRouter);
     app.use('/api/carts', cartRouter);
