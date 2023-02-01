@@ -50,24 +50,28 @@ mongoose.set('strictQuery', false);
  * atajarlo y sino podemos hacer correr el server sin problema,
  * esto sirve para evitar mensajes de errores en consolay afectar al server
  */
-mongoose.connect( uri , 
-    { dbName: 'ecommerce' },
-    (error) =>{
-        if(error){
-            console.log('No se pudo conectar a la DB');
-            return
-        }
-        // corremos el servidor con estas lineas
-        console.log('DB connected');
-        // se ejecuta en el puerto 8080
-        // 127.0.0.1:8080
-        const httpServer = app.listen(8080, ()=> console.log('listening'));
-        // capturamos cualquier error
-        httpServer.on('error', ()=> console.log('Error'));
-        // iniciamos server web socket.io
-        const io = new Server(httpServer);
+const env = () => {
+    mongoose.connect(uri,
+        { dbName: 'ecommerce' },
+        (error) => {
+            if (error) {
+                console.log('No se pudo conectar a la DB');
+                return
+            }
+            // corremos el servidor con estas lineas
+            console.log('DB connected');
+            // se ejecuta en el puerto 8080
+            // 127.0.0.1:8080
+            const httpServer = app.listen(8080, () => console.log('listening'));
+            // capturamos cualquier error
+            httpServer.on('error', () => console.log('Error'));
+            // iniciamos server web socket.io
+            const io = new Server(httpServer);
 
-        // funcion importada con todos los routes
-        run(io, app);
-    }
-    )
+            // funcion importada con todos los routes
+            run(io, app);
+        }
+    );
+}
+
+env();

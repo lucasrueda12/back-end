@@ -8,13 +8,17 @@ const router = Router();
 router.get('/', async (req, res)=>{
     const carts = await cartModel.find().lean().exec();
     
-    return res.render('carts',{carts});
+    res.send(carts);
+    //return res.render('carts',{carts});
 })
 
 router.get('/:cid', async (req, res)=>{
     const cid = parseInt(req.params.cid);
     const cart = await cartModel.findOne({id: cid}).lean().exec();
-    return res.render('carts', {carts: cart.products});
+    
+    res.send(cart);
+
+    //return res.render('carts', {carts: cart.products});
 })
 
 router.post('/', async (req, res)=>{
@@ -23,40 +27,63 @@ router.post('/', async (req, res)=>{
 })
 
 router.post('/:cid/products/:pid', async (req, res)=>{
-    const cartID = parseInt(req.params.cid);
-    const prodID = parseInt(req.params.pid);
+    const cartID = req.params.cid;
+    const prodID = req.params.pid;
+    const quantity = req.body.quantity || 1;
+    const cart = await cartModel.findById(cartID);
 
-    const cart = await cartModel.findOne({id: prodID}).lean().exec();
-
-    const idx = cart.products.findIndex(prod => prod.id === prodID);
+    const idx = cart.products.findIndex(prod => prod.id == prodID);
 
     if(idx != -1){
-        cart.products[idx].quantity++;
+        cart.products[idx].quantity = quantity;
     }else{
-        cart.products.push({id: prodID, quantity: 1})
+        cart.products.push( {id: prodID, quantity: quantity })
     }
-    const result = await cartModel.updateOne({id: cartID}, cart);
-    res.send({status: 'successful', result})
+
+    await cart.save();
+    res.json({status: 'successful', cart})
 })
 
+router.put('/:cid', async (req, res)=>{
+    const newProducts= req.body;
+    const cid = req.params.cid;
+
+    const cart = await cartModel.findById(cid);
+    if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
+    
+    cart.products = newProducts;
+    
+    await cart.save();
+
+    res.json({status: 'successful', cart})
+
+});
+
 router.delete('/:cid', async (req, res)=>{
-    const pid = parseInt(req.params.cid);
-    const result = await cartModel.deleteOne({id:cid});
+    const pid = req.params.cid;
+    const result = await cartModel.findByIdAndDelete(pid);
     res.send({status: 'update successful', result});
 })
 
 router.delete('/:cid/products/:pid', async (req, res)=>{
-    const cartID = parseInt(req.params.cid);
-    const prodID = parseInt(req.params.pid);
+    const cartID = req.params.cid;
+    const prodID = req.params.pid;
 
-    const cart = await cartModel.findOne({id: prodID}).lean().exec();
+    const cart = await cartModel.findById(cartID);
 
-    const idx = cart.products.findIndex(prod => prod.id === prodID);
-    if(idx != -1){
-        cart.products.slice(idx, 1);
+    if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
+
+    const idx = cart.products.findIndex(p => p.id == prodID);
+    console.log(idx);
+    if(idx < 0) return res.status(404).json({status: 'Error', error: 'product not found'});
+    if(idx == 0 && cart.products.length == 1){
+        cart.products = [];
+    }else{
+        cart.products = cart.products.slice(idx, 1);
     }
-    const result = await cartModel.updateOne({id: cartID}, cart);
-    res.send({status: 'successful', result})
+
+    await cart.save();
+    res.json({status: 'successful', cart})
 })
 
 export default router;

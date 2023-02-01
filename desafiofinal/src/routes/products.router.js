@@ -5,41 +5,49 @@ import prodModel from '../dao/models/products.model.js';
 const router = Router();
 //const productManager = new ProductManager('products.json');
 
-router.get('/', async (req, res)=>{
+router.get('/', async (req, res) => {
     try {
-        let limit = req.query.limit;
-        const products = await prodModel.find().lean().exec();
-        if(!limit){
-            return res.render('home',{ products });
+        let limit = req.query?.limit ?? 10;
+        let page = req.query?.page ?? 1;
+        let filter = req.query?.filter ?? '';
+        let sortQuery = req.query?.sort ?? '';
+        let sortQueryOrder = req.query?.sortOrder ?? 'desc';
+        const search = {}
+        if(filter){
+            search.title = filter
         }
-        limit = limit < products.length ? limit : products.length;
-        const arr = [];
-        for(let i=0; i<limit; i++){
-            arr.push(products[i]);
+
+        const sort = {}
+        if(sortQuery){
+            sort.sortQuery = sortQueryOrder;
         }
-        return res.render('home', { arr });
+
+        const options ={
+            limit,
+            page,
+            sort,
+            lean: true
+        }
+
+        const products = await prodModel.paginate(search, options);
+
+        console.log(JSON.stringify(products, null, 2, '/t'));
         
+        return res.render('home', {
+            style: 'home.css',
+            data: products.docs
+        });
     } catch (error) {
         console.log('ERROR: ', error);
     }
 })
 
-router.get('/realtimeproducts', async (req, res)=>{
+router.get('/:pid', async (req, res) => {
     try {
-        const products = await prodModel.find().lean().exec();
-        res.render('realTimeProducts', {
-            data: products
-        })
-    } catch (error) {
-        console.log("Error: ", error);
-    }
-})
-
-router.get('/:pid', async (req, res)=>{
-    try {
-        const pid = parseInt(req.params.pid);
-        const prod = await prodModel.findOne({id: pid}).lean().exec();
-        res.send({status: 'successful', payload: prod})
+        const pid = req.params.pid;
+        console.log(pid);
+        const prod = await prodModel.findById(pid);
+        res.send({ status: 'successful', payload: prod })
     } catch (error) {
         console.log('ERROR: ', error);
     }
@@ -47,14 +55,15 @@ router.get('/:pid', async (req, res)=>{
 
 router.post("/", async (req, res) => {
     try {
-        const product = req.body
+        const product = req.body;
+        console.log(product.thumbnails);
         if (!product.title) {
             return res.status(400).json({
                 message: "Error Falta el nombre del producto"
             })
         }
-        const productAdded = await prodModel.create(product)
-        req.io.emit('updatedProducts', await prodModel.find().lean().exec());
+        const productAdded = new prodModel(product);
+        await productAdded.save();
         res.json({
             status: "Success",
             productAdded
@@ -67,55 +76,28 @@ router.post("/", async (req, res) => {
     }
 })
 
-router.put('/:pid', async (req, res) =>{
+router.put('/:pid', async (req, res) => {
     try {
-        const pid = parseInt(req.params.pid);
+        const pid = req.params.pid;
         const update = req.body;
+        const prod = await prodModel.findById(pid).lean().exec();
+        const result = await prodModel.updateOne({ title: prod.title }, update);
 
-        const result = await prodModel.find({id: pid}, update);
-        req.io.emit('updatedProducts', await prodModelModel.find().lean().exec());
-
-        res.send({status: 'successful', payload: result});
+        res.send({ status: 'successful', payload: result });
     } catch (error) {
         console.log('ERROR: ', error);
     }
 })
 
-router.delete('/:pid', async (req, res)=>{
+router.delete('/:pid', async (req, res) => {
     try {
-        const pid = parseInt(req.params.pid);
-        const result = await prodModel.deleteOne({id: pid});
-        req.io.emit('updatedProducts', await prodModel.find().lean().exec());
-        res.send({status: 'successful', payload: result});
+        const pid = req.params.pid;
+        const result = await prodModel.deleteOne({ id: pid });
+        res.send({ status: 'successful', payload: result });
     } catch (error) {
         console.log('ERROR: ', error);
     }
 
 })
-
-
-/* io.on('connection', socket =>{
-    console.log('new cliente connected');
-
-    socket.on('post', async data =>{
-        try {
-            const generatedProd = new prodModel(data);
-            await generatedProd.save();
-    
-            io.emit('post', prodModel.find().lean().exec())
-        } catch (error) {
-            console.log('ERROR: ', error);
-        }
-    })
-    socket.on('delete', async data =>{
-        try {
-
-            const result = await prodModel.deleteOne({id: data})
-            io.emit('delete', await prodModel.find().lean().exec())
-        } catch (error) {
-            console.log('ERROR: ', error);
-        }
-    })
-}) */
 
 export default router;

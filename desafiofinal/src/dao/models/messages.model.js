@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const msgCollections = "messages";
 
@@ -9,7 +10,9 @@ const messagesSchema = new mongoose.Schema({
     date: String
 });
 
-mongoose.set("strictQuery", false)
+
+messagesSchema.plugin(mongoosePaginate);
+mongoose.set("strictQuery", false);
 const msgModel = mongoose.model(msgCollections, messagesSchema);
 
 export default msgModel;

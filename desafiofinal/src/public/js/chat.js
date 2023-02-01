@@ -38,7 +38,6 @@ chatBox.addEventListener('keyup', event =>{
                 message: chatBox.value,
                 date: `${new Date().getHours()}:${new Date().getMinutes()}`
             })
-
             chatBox.value = '';
         }
     }
