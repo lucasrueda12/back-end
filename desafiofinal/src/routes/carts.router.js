@@ -67,11 +67,41 @@ router.put('/:cid', async (req, res)=>{
 
 });
 
+router.put('/:cid/products/:pid', async (req, res) =>{
+    const cartID = req.params.cid;
+    const prodID = req.params.pid;
+    const quantity = req.body?.quantity || 1;
+    const cart = await cartModel.findById(cartID);
+    const idx = cart.products.findIndex(prod => prod.id == prodID);
+    if(idx != -1){
+        cart.products[idx].quantity = quantity;
+    }else{
+        return res.status(404).json({status: 'ERROR', error: 'Product not found'})
+    }
+    await cart.save();
+    res.json({status: 'successful', cart})
+});
+
 router.delete('/:cid', async (req, res)=>{
-    const pid = req.params.cid;
-    const result = await cartModel.findByIdAndDelete(pid);
-    res.send({status: 'update successful', result});
+    const cid = req.params.cid;
+    const result = await cartModel.findByIdAndDelete(cid);
+
+    if(!result) return res.status(404).json({status: 'ERROR', error: 'cart not found'})
+    res.json({status: 'update successful', result});
 })
+
+router.delete('/:cid', async (req, res) =>{
+    const cid = req.params.cid;
+    const cart = await cartModel.findById(cid);
+
+    if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
+
+    cart.products = [];
+    
+    await cart.save();
+    
+    res.json({status: 'successful', cart})
+});
 
 router.delete('/:cid/products/:pid', async (req, res)=>{
     const cartID = req.params.cid;
