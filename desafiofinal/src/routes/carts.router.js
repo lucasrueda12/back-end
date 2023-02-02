@@ -7,7 +7,6 @@ const router = Router();
 
 router.get('/', async (req, res)=>{
     const carts = await cartModel.find().lean().exec();
-    console.log(JSON.stringify(carts, null, 2, '/t'));
     //res.send(carts);
     return res.render('carts',
     { 
@@ -21,7 +20,6 @@ router.get('/:cid', async (req, res)=>{
     const cid = req.params.cid;
     const cart = await cartModel.findById(cid).populate('products.id').lean().exec();
     const carts = cart
-    console.log(JSON.stringify(carts, null, 2, '/t'));
     return res.render('carts', {
         titlePage: 'Cart',
         style: 'cart.css',
@@ -37,8 +35,11 @@ router.post('/', async (req, res)=>{
 router.post('/:cid/products/:pid', async (req, res)=>{
     const cartID = req.params.cid;
     const prodID = req.params.pid;
+    console.log(prodID);
     const quantity = req.body?.quantity || 1;
     const cart = await cartModel.findById(cartID);
+
+    if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
 
     const idx = cart.products.findIndex(prod => prod.id == prodID);
 
@@ -49,13 +50,14 @@ router.post('/:cid/products/:pid', async (req, res)=>{
     }
 
     await cart.save();
-    res.json({status: 'successful', cart})
+    //res.json({status: 'successful', cart})
+    res.redirect(`/api/carts/${cartID}`);
 })
 
 router.put('/:cid', async (req, res)=>{
     const newProducts= req.body;
     const cid = req.params.cid;
-
+    log
     const cart = await cartModel.findById(cid);
     if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
     

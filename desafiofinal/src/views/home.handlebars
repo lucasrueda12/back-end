@@ -25,24 +25,24 @@
             <form id="delForm">
                 <label for="title">Nombre del producto</label>
                 <input type="text" name="title" id="title">
-                
+
                 <label for="description">Descripción del producto</label>
-                
+
                 <textarea name="description" id="description" cols="30" rows="10"></textarea>
-                
+
                 <label for="price">Precio del producto</label>
                 <input type="text" name="price" id="price">
-                
+
                 <label for="thumbnail">Foto del producto</label>
                 <input type="text" name="thumbnails" id="thumbnail">
-                
+
                 <label for="stock">Stock del producto</label>
                 <input type="text" name="stock" id="stock">
-                
+
                 <label for="category">Categoria del producto</label>
                 <input type="text" name="category" id="category">
 
-                
+
                 <input type="submit" value="create">
             </form>
         </div>
@@ -72,10 +72,15 @@
                 <td>{{price}}</td>
                 <td>{{stock}}</td>
                 <td>{{category}}</td>
+                <td>
+                    <form action="/api/carts/63d438f59e8c761549334454/products/{{_id}}" method="post">
+                        <input type="submit">
+                    </form>
+                </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
-
+<script src="/js/home.js"></script>
 <link rel="stylesheet" href="/css/{{style}}">
