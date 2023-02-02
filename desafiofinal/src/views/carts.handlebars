@@ -1,23 +1,40 @@
-<div>
+<div class="carts-container">
     <h1>
-        Carritos
+        {{titlePage}}
     </h1>
-    <div>
-        {{#each carts}}
-        <i>{{this._id}}</i>
-        <table>
-            <tr>
-                <td><strong>id</strong></td>
-                <td><strong>quantity</strong></td>
-            </tr>
-            {{#each this.products}}
-            <tr>
-                <td>{{this.id}}</td>
-                <td>{{this.quantity}}</td>
-            </tr>
-            {{/each}}
+    <div class="carts">
+        <table class="table-cart">
+            <thead>
+                <tr>
+                    <th>title</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>image</th>
+                    <th>quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each carts}}
+                    {{#each products}}
+                    <tr>
+                        {{#id}}
+                        <td>{{this.title}}</td>
+                        <td>{{description}}</td>
+                        <td>{{price}}</td>
+                        <td>
+                            {{#each thumbnails}}
+                        <img src="{{this}}" alt="">
+                            {{/each}}
+                        </td>
+                        {{/id}}
+                        <td>{{this.quantity}}</td>
+                    </tr>
+                    {{/each}}
+                {{/each}}
+            </tbody>
         </table>
-        {{/each}}
     </div>
 
 </div>
+
+<link rel="stylesheet" href="/css/cart.css">

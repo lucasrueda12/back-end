@@ -31,8 +31,6 @@ router.get('/', async (req, res) => {
 
         const products = await prodModel.paginate(search, options);
 
-        console.log(JSON.stringify(products, null, 2, '/t'));
-        
         return res.render('home', {
             style: 'home.css',
             data: products.docs
@@ -57,6 +55,7 @@ router.post("/", async (req, res) => {
     try {
         const product = req.body;
         console.log(product.thumbnails);
+
         if (!product.title) {
             return res.status(400).json({
                 message: "Error Falta el nombre del producto"

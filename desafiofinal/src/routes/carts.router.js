@@ -7,18 +7,26 @@ const router = Router();
 
 router.get('/', async (req, res)=>{
     const carts = await cartModel.find().lean().exec();
-    
-    res.send(carts);
-    //return res.render('carts',{carts});
+    console.log(JSON.stringify(carts, null, 2, '/t'));
+    //res.send(carts);
+    return res.render('carts',
+    { 
+        titlePage: 'Carts',
+        style: 'cart.css',
+        carts
+    });
 })
 
 router.get('/:cid', async (req, res)=>{
-    const cid = parseInt(req.params.cid);
-    const cart = await cartModel.findOne({id: cid}).lean().exec();
-    
-    res.send(cart);
-
-    //return res.render('carts', {carts: cart.products});
+    const cid = req.params.cid;
+    const cart = await cartModel.findById(cid).populate('products.id').lean().exec();
+    const carts = cart
+    console.log(JSON.stringify(carts, null, 2, '/t'));
+    return res.render('carts', {
+        titlePage: 'Cart',
+        style: 'cart.css',
+        carts: [carts]
+    });
 })
 
 router.post('/', async (req, res)=>{
@@ -29,7 +37,7 @@ router.post('/', async (req, res)=>{
 router.post('/:cid/products/:pid', async (req, res)=>{
     const cartID = req.params.cid;
     const prodID = req.params.pid;
-    const quantity = req.body.quantity || 1;
+    const quantity = req.body?.quantity || 1;
     const cart = await cartModel.findById(cartID);
 
     const idx = cart.products.findIndex(prod => prod.id == prodID);

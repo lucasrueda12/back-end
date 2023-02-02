@@ -1,24 +1,64 @@
-
 @import url('./header.css');
-img{
-    width: 50px;
-    height: 50px;
-}
+@import url('./table.css');
 
-table{
+.products-container{
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 30px 0 30px;
 }
 
-table tbody{
+h1{
+    text-align: center;
+    width: 100%;
+    font-size: 60px;
+    color: #009879;
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    color: #ffffff;
+}
+
+.form-container{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.box-form{
+    background-color: #009879;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 1em;
+    font-family: sans-serif;
+    width: 40%;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    padding: 12px 15px;
+}
+
+
+form{
     display: flex;
     flex-direction: column;
     width: 100%;
-    justify-content: space-around;
 }
 
-table tbody tr{
-    margin-top: 50px;
+form label{
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
 }
+
+form label input{
+    background-color: #f3f3f300;
+    outline: #00987a0a;
+}
+
+
+
