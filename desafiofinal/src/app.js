@@ -9,8 +9,8 @@ import handlebars from "express-handlebars"
 //sessions
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-
-
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
 
 //utils
 import __dirname from './utils.js';
@@ -61,7 +61,9 @@ app.use(session({
     resave: true, // mantiene la session activa
     saveUninitialized: true // guarda cualquier cosa asi sea vacio
 }));
-
+initializePassport()
+app.use(passport.initialize());
+app.use(passport.session());
 
 /**
  * query / consulta

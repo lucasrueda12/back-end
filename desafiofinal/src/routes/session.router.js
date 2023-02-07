@@ -1,60 +1,56 @@
 import { Router } from 'express';
-import userModel from '../dao/models/user.model.js';
+import passport from 'passport';
 
 const router = Router();
 
 //vista para registrar users
-router.get('/register', (req, res) =>{
+router.get('/register', (req, res) => {
     res.render('sessions/register');
 });
 
 
 //api para generar usuarios
-router.post('/register', async (req, res)=>{
-    const userNew = {
-        first_name: req.body.first_name || '',
-        last_name: req.body.last_name || '',
-        email: req.body.email || '',
-        age: req.body.age || 18,
-        password: req.body.password || ''
-    };
-
-    userNew.role = (req.body.email == 'adminCoder@coder.com' && req.body.password == 'coderAdmin')? 'admin' : 'user';
-    
-    console.log(userNew);
-
-    const user = new userModel(userNew);
-    await user.save();
-    
-    console.log(user);
-
+router.post('/register', passport.authenticate('register', { failureRedirect: '/session/failregister' }), async (req, res) => {
     res.redirect('/session/login');
 });
 
+router.get('/failregister', (req, res) => {
+    console.log('Fail Strategy');
+    res.send({ error: 'Failed' });
+})
+
 //vista de login
-router.get('/login', (req, res) =>{
+router.get('/login', (req, res) => {
     res.render('sessions/login');
 })
 
 //api para login
-router.post('/login', async (req, res) =>{
-    const { email, password } = req.body
+router.post('/login', passport.authenticate('login', { failureRedirect: '/session/faillogin' }), async (req, res) => {
+    if (!req.user) {
+        return res.status(400).send({ status: 'error', error: 'Invalid credentials' })
+    }
 
-    const user = await userModel.find({ email: email, password: password }).lean().exec();
-
-    if(!user) return res.status(401).render('errors/base', {
-        error: 'email or password invalid'
-    })
-
-    req.session.user = user;
+    req.session.user = {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        age: req.user.age,
+        role: req.user.role
+    }
 
     res.redirect('/products');
 })
 
+router.get('/faillogin', (req, res) => {
+    console.log('Fail Strategy');
+    res.send({ error: 'Fail login' });
+})
+
+
 // cerrar session
-router.get('/logout', (req, res)=>{
-    req.session.destroy(err =>{
-        if(err) return res.status(500).render('errors/base', {error: err})
+router.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) return res.status(500).render('errors/base', { error: err })
         res.redirect('/sessions/login');
     })
 })

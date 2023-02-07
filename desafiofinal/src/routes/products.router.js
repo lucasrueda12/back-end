@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 
         return res.render('home', {
             user,
-            role: (user[0]?.role == 'admin'),
+            role: (user?.role == 'admin'),
             style: 'home.css',
             data: products.docs
         });
