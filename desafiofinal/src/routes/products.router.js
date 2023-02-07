@@ -31,10 +31,11 @@ router.get('/', async (req, res) => {
 
         const products = await prodModel.paginate(search, options);
 
-        const user = req.session?.user;
+        const user = req.session?.user || [];
 
         return res.render('home', {
             user,
+            role: (user[0]?.role == 'admin'),
             style: 'home.css',
             data: products.docs
         });
