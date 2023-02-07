@@ -31,7 +31,10 @@ router.get('/', async (req, res) => {
 
         const products = await prodModel.paginate(search, options);
 
+        const user = req.session?.user;
+
         return res.render('home', {
+            user,
             style: 'home.css',
             data: products.docs
         });

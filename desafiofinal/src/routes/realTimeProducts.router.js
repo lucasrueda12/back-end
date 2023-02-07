@@ -5,7 +5,7 @@ import prodModel from '../dao/models/products.model.js';
 const router = Router();
 //const productManager = new ProductManager('products.json');
 
-router.get('/realtimeproducts', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const products = await prodModel.find().lean().exec();
 

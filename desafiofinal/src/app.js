@@ -1,7 +1,16 @@
+// 
 import express from "express";
+// DB
 import mongoose from "mongoose";
+// socket
 import { Server } from "socket.io";
+//vista
 import handlebars from "express-handlebars"
+//sessions
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+
+
 
 //utils
 import __dirname from './utils.js';
@@ -34,7 +43,25 @@ app.use(express.urlencoded({ extended: true }));
 
 // mongoose
 // uri para la app del servidor mongo atlas
-const uri = 'mongodb+srv://Lucasrueda12:Lucascapo12@cluster0.mthrpne.mongodb.net/?retryWrites=true&w=majority';
+const MONGO_URI = 'mongodb+srv://Lucasrueda12:Lucascapo12@cluster0.mthrpne.mongodb.net/?retryWrites=true&w=majority';
+const MONGO_DB_NAME = 'ecommerce';
+
+
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: MONGO_URI,
+        dbName: MONGO_DB_NAME,
+        mongoOptions:{
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        },
+        ttl: 15
+    }),
+    secret: '123456',
+    resave: true, // mantiene la session activa
+    saveUninitialized: true // guarda cualquier cosa asi sea vacio
+}));
+
 
 /**
  * query / consulta
@@ -44,15 +71,15 @@ const uri = 'mongodb+srv://Lucasrueda12:Lucascapo12@cluster0.mthrpne.mongodb.net
 mongoose.set('strictQuery', false);
 
 /**
- * primer parametro la uri del servidor,
+ * primer parametro la MONGO_URI del servidor,
  * el segundo parametro es el nombre de la base de datos a conectar,
  * por ultimo un middleware para capturar errores, si aparece un error podemos
  * atajarlo y sino podemos hacer correr el server sin problema,
  * esto sirve para evitar mensajes de errores en consolay afectar al server
  */
 const env = () => {
-    mongoose.connect(uri,
-        { dbName: 'ecommerce' },
+    mongoose.connect(MONGO_URI,
+        { dbName: MONGO_DB_NAME },
         (error) => {
             if (error) {
                 console.log('No se pudo conectar a la DB');
@@ -73,5 +100,7 @@ const env = () => {
         }
     );
 }
+
+
 
 env();

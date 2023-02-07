@@ -14,14 +14,19 @@
     <header>
         <nav>
             <ul>
-                <li><a href="/">home</a></li>
                 <li><a href="/products">products</a></li>
-                <li><a href="/api/products/realtimeproducts">realtimeproducts</a></li>
                 <li> <a href="/api/chat">chat</a></li>
                 <li><a href="/api/carts">carts</a></li>
+                <li><a href="/session/login">login</a></li>
+                <li><a href="/session/register">register</a></li>
             </ul>
         </nav>
     </header>
+    <div>
+        {{#user}}
+        <button>{{first_name}} {{last_name}}</button>
+        {{/user}}
+    </div>
     {{{ body }}}
 </body>
 </html>
