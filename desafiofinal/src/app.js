@@ -91,7 +91,7 @@ const env = () => {
             console.log('DB connected');
             // se ejecuta en el puerto 8080
             // 127.0.0.1:8080
-            const httpServer = app.listen(8080, () => console.log('listening'));
+            const httpServer = app.listen(8080, () => console.log('listening...'));
             // capturamos cualquier error
             httpServer.on('error', () => console.log('Error'));
             // iniciamos server web socket.io

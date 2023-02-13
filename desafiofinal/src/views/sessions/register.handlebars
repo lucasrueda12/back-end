@@ -1,8 +1,7 @@
 <div class="container">
-    <h1>User Register</h1>
-    
+    <div class="form-container">
+        <h1>User Register</h1>
         <form action="/session/register" method="post">
-            <h4>Form Register</h4>
             <label for="first_name">first name</label>
             <input class="controls" id="first_name" type="text" name="first_name" placeholder="Enter your name">
             <label for="last_name">last name</label>
@@ -20,11 +19,13 @@
             <p>Estoy de acuerdo con <a href="#">Terminos y Condiciones</a></p>
 
             <input class="botons" type="submit" value="create">
-            
+
             <p>
                 <a href="/session/login">¿Ya tienes una cuenta?</a>
             </p>
         </form>
+        <a href="/session/github"><button class="botons">Sign in to GitHub</button></a>
+    </div>
 </div>
 
 <link rel="stylesheet" href="/css/log.css">
