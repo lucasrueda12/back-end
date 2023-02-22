@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import { Server } from "socket.io";
 //vista
 import handlebars from "express-handlebars"
+// cookie
+import cookieParser from "cookie-parser";
 //sessions
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
@@ -40,6 +42,8 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 // permite recibir indormacion desde la url por medio del body como json
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser('WSPcookieToken'))
 
 // mongoose
 // uri para la app del servidor mongo atlas

@@ -19,11 +19,10 @@ router.get('/', async (req, res)=>{
 router.get('/:cid', async (req, res)=>{
     const cid = req.params.cid;
     const cart = await cartModel.findById(cid).populate('products.id').lean().exec();
-    const carts = cart
     return res.render('carts', {
         titlePage: 'Cart',
         style: 'cart.css',
-        carts: [carts]
+        carts: [cart]
     });
 })
 

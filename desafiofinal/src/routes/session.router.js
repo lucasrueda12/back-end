@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
+import { JWT_COOKIE_NAME } from '../config/credentials.js';
+import { passportCall, generateToken, authToken, authorization } from '../utils.js';
 
 const router = Router();
 
@@ -30,15 +32,7 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
         return res.status(400).send({ status: 'error', error: 'Invalid credentials' })
     }
 
-    req.session.user = {
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        email: req.user.email,
-        age: req.user.age,
-        role: req.user.role
-    }
-
-    res.redirect('/products');
+    res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/products');
 })
 
 router.get('/faillogin', (req, res) => {
@@ -60,18 +54,29 @@ router.get(
 
         req.session.user = req.user
         console.log('user session: ', req.session.user);
-        res.redirect('/products');
+        res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/products');
     }
-)
+);
 
 
 // cerrar session
 router.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) return res.status(500).render('errors/base', { error: err })
-        res.redirect('/sessions/login');
+    res.clearCookie(JWT_COOKIE_NAME).redirect('home');
+});
+
+router.get('/private', passportCall('jwt'), authorization('user'), (req, res)=>{
+    res.send({status: 'success', payload: req.user, role: 'user'});
+});
+
+router.get('/secret', passportCall('jwt'), authorization('admin'), (req, res)=>{
+    res.send({status: 'success', payload: req.user, role: 'ADMIN'});
+});
+
+router.get('/current', passportCall('jwt'), authorization('user'), (req, res)=>{
+    console.log('get: ',req.user);
+    res.render('sessions/profile', {
+        user: req.user.user
     })
 })
-
 
 export default router;

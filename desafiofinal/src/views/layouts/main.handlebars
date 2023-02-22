@@ -22,11 +22,13 @@
             </ul>
         </nav>
     </header>
-    <div>
+    {{#if user}}
+    <div class="user-container">
         {{#user}}
-        <button>{{first_name}} {{last_name}}</button>
+        <a class="user" href="/session/current">{{first_name}}</a>
         {{/user}}
     </div>
+    {{/if}}
     {{{ body }}}
 </body>
 </html>
