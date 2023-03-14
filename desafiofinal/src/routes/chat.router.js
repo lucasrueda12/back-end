@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import msgModel from '../dao/models/messages.model.js';
+import msgModel from '../dao/mongo/models/messages.model.js';
 
 const router = Router();
 

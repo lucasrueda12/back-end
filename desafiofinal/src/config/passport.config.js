@@ -5,8 +5,8 @@ import local from 'passport-local';
 import GitHubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
 
-import userModel from '../dao/models/user.model.js';
-import cartModel from '../dao/models/cart.model.js';
+import userModel from '../dao/mongo/models/user.model.js';
+import cartModel from '../dao/mongo/models/cart.model.js';
 
 import { createHash, extractCookie, generateToken, isValidPassword } from '../utils.js';
 import { PRIVATE_KEY } from "./credentials.js";
@@ -30,6 +30,7 @@ const initializePassport = () => {
                 return done(null, false);
             }
 
+            
             const newUser = {
                 first_name,
                 last_name,

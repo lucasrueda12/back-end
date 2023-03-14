@@ -1,9 +1,8 @@
-// 
+// express
 import express from "express";
 // DB
 import mongoose from "mongoose";
 // socket
-import { Server } from "socket.io";
 //vista
 import handlebars from "express-handlebars"
 // cookie
@@ -15,8 +14,9 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
 //utils
+import config from "./config/config.js";
 import __dirname from './utils.js';
-import run from './run.js';
+import MongoSingleton from "./mongoSingleton.js";
 
 const app = express();
 
@@ -47,14 +47,13 @@ app.use(cookieParser('WSPcookieToken'))
 
 // mongoose
 // uri para la app del servidor mongo atlas
-const MONGO_URI = 'mongodb+srv://Lucasrueda12:Lucascapo12@cluster0.mthrpne.mongodb.net/?retryWrites=true&w=majority';
-const MONGO_DB_NAME = 'ecommerce';
+
 
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: MONGO_URI,
-        dbName: MONGO_DB_NAME,
+        mongoUrl: config.mongo_uri,
+        dbName: config.mongo_db_name,
         mongoOptions:{
             useNewUrlParser: true,
             useUnifiedTopology: true
@@ -84,29 +83,7 @@ mongoose.set('strictQuery', false);
  * esto sirve para evitar mensajes de errores en consolay afectar al server
  */
 const env = () => {
-    mongoose.connect(MONGO_URI,
-        { dbName: MONGO_DB_NAME },
-        (error) => {
-            if (error) {
-                console.log('No se pudo conectar a la DB');
-                return
-            }
-            // corremos el servidor con estas lineas
-            console.log('DB connected');
-            // se ejecuta en el puerto 8080
-            // 127.0.0.1:8080
-            const httpServer = app.listen(8080, () => console.log('listening...'));
-            // capturamos cualquier error
-            httpServer.on('error', () => console.log('Error'));
-            // iniciamos server web socket.io
-            const io = new Server(httpServer);
-
-            // funcion importada con todos los routes
-            run(io, app);
-        }
-    );
+    MongoSingleton.getInstance(app);
 }
-
-
 
 env();
