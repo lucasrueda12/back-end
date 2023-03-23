@@ -4,7 +4,7 @@ import cartRouter from './routes/carts.router.js';
 import chatRouter from './routes/chat.router.js';
 import prodRouter from './routes/products.router.js';
 import sessionRouter from './routes/session.router.js';
-import { passportCall } from './utils.js';
+import { authorization, passportCall } from './utils.js';
 
 const run = (io, app)=>{
     // middleware
@@ -15,12 +15,10 @@ const run = (io, app)=>{
     })
     
     // routes
-
-    
     app.use('/products', passportCall('jwt'), prodRouter);
-    app.use('/api/realtimeproducts', realTimeProductsRouter);
-    app.use('/api/carts', cartRouter);
-    app.use('/api/chat', chatRouter);
+    app.use('/api/realtimeproducts', passportCall('jwt'), realTimeProductsRouter);
+    app.use('/api/carts', passportCall('jwt'), cartRouter);
+    app.use('/api/chat', passportCall('jwt'), chatRouter);
     app.use('/session', sessionRouter);
     
     app.get('/', (req, res)=> res.render('home', {style: 'home.css'}))

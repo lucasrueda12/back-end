@@ -7,7 +7,10 @@ const messagesSchema = new mongoose.Schema({
     email: String,
     user: String,
     message: String,
-    date: String
+    date: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 

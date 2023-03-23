@@ -26,12 +26,13 @@ router.get('/login', (req, res) => {
     res.render('sessions/login');
 })
 
-//api para login
+//api para login con jwt
 router.post('/login', passport.authenticate('login', { failureRedirect: '/session/faillogin' }), async (req, res) => {
     if (!req.user) {
         return res.status(400).send({ status: 'error', error: 'Invalid credentials' })
     }
 
+    //cookie del token
     res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/products');
 })
 
@@ -54,6 +55,7 @@ router.get(
 
         req.session.user = req.user
         console.log('user session: ', req.session.user);
+        //jwt cookie con el github
         res.cookie(JWT_COOKIE_NAME, req.user.token).redirect('/products');
     }
 );
@@ -61,6 +63,7 @@ router.get(
 
 // cerrar session
 router.get('/logout', (req, res) => {
+    // borra la cookie
     res.clearCookie(JWT_COOKIE_NAME).redirect('home');
 });
 
@@ -73,9 +76,9 @@ router.get('/secret', passportCall('jwt'), authorization('admin'), (req, res)=>{
 });
 
 router.get('/current', passportCall('jwt'), authorization('user'), (req, res)=>{
-    console.log('get: ',req.user);
+    console.log('get: ', UserDTO(req.user.user).getCurrent());
     res.render('sessions/profile', {
-        user: req.user.user
+        user: UserDTO(req.user.user).getCurrent()
     })
 })
 

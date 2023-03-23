@@ -1,9 +1,7 @@
-import CartService from "../services/cart.service.js";
-
-const cartService = new CartService();
+import { CartService, TicketService } from "../../repository/index.js";
 
 export const getAll = async (req, res) =>{
-    const carts = await cartService.getAll();
+    const carts = await CartService.getAll();
     res.render('carts',
     { 
         titlePage: 'Carts',
@@ -14,7 +12,7 @@ export const getAll = async (req, res) =>{
 
 export const getOne = async (req, res) =>{
     const cid =  req.params.cid;
-    const cart = await cartService.getOne(cid);
+    const cart = await CartService.getOne(cid);
     return res.render('carts', {
         titlePage: 'Cart',
         style: 'cart.css',
@@ -23,7 +21,7 @@ export const getOne = async (req, res) =>{
 }
 
 export const create = async (req, res) =>{
-    const createCart = await cartService.create();
+    const createCart = await CartService.create();
     res.send({status: 'successful', createCart});
 }
 
@@ -42,7 +40,7 @@ export const addProduct = async (req, res) =>{
 export const update = async (req, res) =>{
     const newProducts= req.body;
     const cid = req.params.cid;
-    const cart = await cartService.update(cid, newProducts);
+    const cart = await CartService.update(cid, newProducts);
     if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
     res.json({status: 'successful', cart})
 }
@@ -76,5 +74,17 @@ export const deleteOneProduct = async (req, res) =>{
     const cart = await CartService.deleteOneProduct(cid, pid);
     if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
     res.json({status: 'successful', cart})
+}
+
+export const purchase = async (req, res) =>{
+    const cid = req.params.cid;
+    const status = await CartService.purchase(cid);
+    if (!status) return res.status(404).json({ status: 'Error', error: 'cart not found' });
+
+    await CartService.update(cid, status.noStock);
+    
+    const resultTocken = await TicketService.create(req.user.email, status.totalPrice);
+    status.tocken = resultTocken;
+    res.json({status: 'successful', status});
 }
 

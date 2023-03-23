@@ -63,6 +63,7 @@ const initializePassport = () => {
 
             if (!isValidPassword(user, password)) return done(null, false);
 
+            //genera el token del jwt
             const token = generateToken(user);
 
             user.token = token;
@@ -117,6 +118,7 @@ const initializePassport = () => {
         secretOrKey: PRIVATE_KEY,
     }, async(jwt_payload, done)=>{
         try {
+            // returna el user
             return done(null, jwt_payload);
         } catch (error) {
             return done(error);

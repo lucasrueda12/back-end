@@ -1,17 +1,17 @@
 import { Router } from 'express';
 import { create, deleteProd, getAll, getOne, update } from '../dao/controllers/products.controller.js';
-//import ProductManager from '../manager/ProdMger.js';
+import { authorization } from '../utils.js';
+
 const router = Router();
-//const productManager = new ProductManager('products.json');
 
 router.get('/', getAll);
 
 router.get('/:pid', getOne);
 
-router.post("/", create);
+router.post("/", authorization('admin'), create);
 
-router.put('/:pid', update);
+router.put('/:pid', authorization('admin'), update);
 
-router.delete('/:pid', deleteProd);
+router.delete('/:pid', authorization('admin'), deleteProd);
 
 export default router;

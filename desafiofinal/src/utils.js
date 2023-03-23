@@ -4,6 +4,7 @@ import bcrypt, { hashSync } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { PRIVATE_KEY, JWT_COOKIE_NAME } from './config/credentials.js';
+import UserDTO from './dao/DTO/user.dto.js';
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -48,10 +49,8 @@ export const passportCall = (strategy) => {
     return async (req, res, next) => {
         passport.authenticate(strategy, function (err, user, info) {
             if (err) return next(err);
-            console.log('passportCall: user: ', user);
             if (!user) {
                 return res.status(401).render('errors/base', { error: info.messages ? info.messages : info.toString() })
-                //return next();
             };
             req.user = user;
             next();

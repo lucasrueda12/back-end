@@ -24,6 +24,7 @@ export default class User{
     create = async(newUser)=>{
         try {
             const user = await userModel.findOne({name: newUser.name});
+            if (user) return user;
             const result = await userModel.create(newUser);
             return result;
         } catch (error) {

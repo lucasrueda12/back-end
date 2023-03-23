@@ -3,7 +3,7 @@ import msgModel from "./models/messages.model.js";
 export default class Message{
     constructor(){}
 
-    get = async()=>{
+    getAll = async()=>{
         try {
             const messages = await msgModel.find().lean().exec();
             return messages;
@@ -12,7 +12,7 @@ export default class Message{
         }
     }
 
-    insert = async(data)=>{
+    create = async(data)=>{
         try {
             const result = await msgModel.create(data);
             return result;

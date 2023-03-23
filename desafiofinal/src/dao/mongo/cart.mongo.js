@@ -1,7 +1,8 @@
+import { ProductService } from "../../repository/index.js";
 import cartModel from "./models/cart.model.js";
 
 export default class Cart {
-    constructor() {}
+    constructor() { }
 
     getAll = async () => {
         try {
@@ -14,7 +15,7 @@ export default class Cart {
 
     getOne = async (id) => {
         try {
-            const cart = await cartModel.findById(id).populate('products.id').lean().exec();
+            const cart = await cartModel.findById(id).populate('products.id');
             return cart;
         } catch (error) {
             console.log('cart not found');
@@ -102,6 +103,29 @@ export default class Cart {
             return await cart.save();
         } catch (error) {
             console.log('Error delete one product in mongo: ' + error);
+        }
+    }
+
+    purchase = async (cid) => {
+        try {
+            const cart = await CartService.getOne(cid);
+
+            let totalPrice = 0;
+            const noStock = [];
+            const comparation = cart.products;
+            comparation.forEach(async p => {
+                if (p.id.stock >= p.quantity) {
+                    p.id.stock -= p.quantity;
+                    await ProductService.update(p.id._id, p.id);
+                    totalPrice += p.id.price * p.quantity;
+                } else {
+                    noStock.push(p.id);
+                }
+            });
+
+            return {noStock, totalPrice};
+        } catch (error) {
+            console.log('Cart not found');
         }
     }
 }
