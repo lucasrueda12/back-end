@@ -6,8 +6,8 @@ import UserRepository from "./user.repository.js";
 import MessageRepository from "./msg.repository.js";
 import TicketRepository from "./ticket.repository.js";
 
-export const TicketService = new TicketRepository(new Ticket);
-export const UserService = new UserRepository(new User);
-export const CartService = new CartRepository(new Cart);
-export const ProductService = new ProductRepository(new Product);
-export const MessageService = new MessageRepository(new Message);
+export const TicketService = new TicketRepository( Ticket);
+export const UserService = new UserRepository( User);
+export const CartService = new CartRepository( Cart);
+export const ProductService = new ProductRepository( Product);
+export const MessageService = new MessageRepository( Message);

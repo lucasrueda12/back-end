@@ -17,7 +17,6 @@ import initializePassport from "./config/passport.config.js";
 //utils
 import config from "./config/config.js";
 import __dirname from './utils.js';
-import MongoSingleton from "./mongoSingleton.js";
 import run from "./run.js";
 
 const app = express();
@@ -87,14 +86,13 @@ mongoose.set('strictQuery', false);
 const env = () => {
     //console.log(' mongo singleton');
     // corremos el servidor con estas lineas
-    console.log('DB connected');
     // se ejecuta en el puerto 8080
     // 127.0.0.1:8080
-    app.listen(8080, () => console.log('listening...'));
+    const httpServer = app.listen(config.port, () => console.log('listening...'));
     // capturamos cualquier error
-    //httpServer.on('error', () => console.log('Error'));
+    httpServer.on('error', () => console.log('Error'));
     // iniciamos server web socket.io
-    //const io = new Server(httpServer);
+    const io = new Server(httpServer);
 
     // funcion importada con todos los routes
     run(io, app);

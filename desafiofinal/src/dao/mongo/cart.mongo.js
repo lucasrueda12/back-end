@@ -113,7 +113,7 @@ export default class Cart {
             let totalPrice = 0;
             const noStock = [];
             const comparation = cart.products;
-            comparation.forEach(async p => {
+            comparation.map(async p => {
                 if (p.id.stock >= p.quantity) {
                     p.id.stock -= p.quantity;
                     await ProductService.update(p.id._id, p.id);

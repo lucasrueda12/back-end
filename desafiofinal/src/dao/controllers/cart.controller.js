@@ -82,9 +82,10 @@ export const purchase = async (req, res) =>{
     if (!status) return res.status(404).json({ status: 'Error', error: 'cart not found' });
 
     await CartService.update(cid, status.noStock);
-    
-    const resultTocken = await TicketService.create(req.user.email, status.totalPrice);
-    status.tocken = resultTocken;
+    if(status.totalPrice>0){
+        const resultTocken = await TicketService.create(req.user.email, status.totalPrice);
+        status.tocken = resultTocken;
+    }
     res.json({status: 'successful', status});
 }
 
