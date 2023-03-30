@@ -5,9 +5,11 @@ import CartRepository from './cart.repository.js';
 import UserRepository from "./user.repository.js";
 import MessageRepository from "./msg.repository.js";
 import TicketRepository from "./ticket.repository.js";
+import Mocking from '../dao/mocking/products.mock.js';
 
 export const TicketService = new TicketRepository( Ticket);
 export const UserService = new UserRepository( User);
 export const CartService = new CartRepository( Cart);
 export const ProductService = new ProductRepository( Product);
 export const MessageService = new MessageRepository( Message);
+export const MockService = new Mocking(100);

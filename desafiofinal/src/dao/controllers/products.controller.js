@@ -8,7 +8,7 @@ export const getAll = async (req, res) => {
         let sortQuery = req.query?.sort ?? '';
         let sortQueryOrder = req.query?.sortOrder ?? 'desc';
 
-        const products = await prodService.getAll(limit, page, filter, sortQuery, sortQueryOrder);
+        const products = await ProductService.getAll(limit, page, filter, sortQuery, sortQueryOrder);
         
         const user = req.user.user || {};
 
@@ -26,7 +26,7 @@ export const getAll = async (req, res) => {
 export const getOne = async(req, res)=>{
     try {
         const pid = req.params.pid;
-        const prod = await prodService.getOne(pid);
+        const prod = await ProductService.getOne(pid);
         res.send({ status: 'successful', payload: prod })
     } catch (error) {
         console.log('ERROR: ', error);
@@ -36,7 +36,7 @@ export const getOne = async(req, res)=>{
 export const create = async(req, res)=>{
     try {
         const product = req.body;
-        const productAdded = await prodService.create(product);
+        const productAdded = await ProductService.create(product);
         res.json({
             status: "Success",
             productAdded
@@ -53,7 +53,7 @@ export const update = async(req, res)=>{
     try {
         const pid = req.params.pid;
         const update = req.body;
-        const result = await prodService.update(pid, update);
+        const result = await ProductService.update(pid, update);
         res.send({ status: 'successful', payload: result });
     } catch (error) {
         console.log('ERROR: ', error);
@@ -63,7 +63,7 @@ export const update = async(req, res)=>{
 export const deleteProd = async(req, res)=>{
     try {
         const pid = req.params.pid;
-        const result = await prodService.delete(pid);
+        const result = await ProductService.delete(pid);
         res.send({ status: 'successful', payload: result });
     } catch (error) {
         console.log('ERROR: ', error);

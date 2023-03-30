@@ -6,8 +6,12 @@ import { passportCall, generateToken, authToken, authorization } from '../utils.
 const router = Router();
 
 //vista para registrar users
+router.get('/', (req, res) => {
+    res.redirect('/session/register');
+});
+
 router.get('/register', (req, res) => {
-    res.render('sessions/register');
+    res.render('session/register');
 });
 
 
@@ -23,7 +27,7 @@ router.get('/failregister', (req, res) => {
 
 //vista de login
 router.get('/login', (req, res) => {
-    res.render('sessions/login');
+    res.render('session/login');
 })
 
 //api para login con jwt
@@ -77,7 +81,7 @@ router.get('/secret', passportCall('jwt'), authorization('admin'), (req, res)=>{
 
 router.get('/current', passportCall('jwt'), authorization('user'), (req, res)=>{
     console.log('get: ', UserDTO(req.user.user).getCurrent());
-    res.render('sessions/profile', {
+    res.render('session/profile', {
         user: UserDTO(req.user.user).getCurrent()
     })
 })

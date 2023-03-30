@@ -3,6 +3,7 @@
 
 
 .container{
+    height: calc(100vh - 60px);
     background-image: url('../img/bg-chat.png');
     background-color: #111b21;
     width: 100%;
