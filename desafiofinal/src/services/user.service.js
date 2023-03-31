@@ -1,5 +1,5 @@
-import UserDTO from "../DTO/user.dto.js";
-import User from "../mongo/user.mongo.js"; 
+import UserDTO from "../dao/DTO/user.dto.js";
+import User from "../dao/mongo/user.mongo.js"; 
 
 export default class UserService{
     constructor(){

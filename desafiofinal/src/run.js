@@ -6,6 +6,7 @@ import prodRouter from './routes/products.router.js';
 import sessionRouter from './routes/session.router.js';
 import mockRouter from './routes/mock.router.js';
 import { authorization, passportCall } from './utils.js';
+import ErrorHandler from './middleware/error.js'
 
 const run = (io, app)=>{
     // middleware
@@ -22,6 +23,8 @@ const run = (io, app)=>{
     app.use('/api/chat', passportCall('jwt'), chatRouter);
     app.use('/session', sessionRouter);
     app.use('/mockingproducts', mockRouter);
+
+    app.use(ErrorHandler);
     app.get('/', (req, res) => {
         res.redirect('/session/register');
     });

@@ -1,3 +1,4 @@
+// USER ERRORS
 export const generateUserErrorInfo = user => {
     return `
     Uno o mas properties estan incompletos o son invalidos.
@@ -9,6 +10,14 @@ export const generateUserErrorInfo = user => {
     `
 }
 
+export const generateGetUsersErrorInfo = () => {
+    return `
+    Problems to get users of data base
+    
+    `
+}
+
+// PRODUCTS ERRORS
 export const generateProductErrorInfo = product =>{
     return `
     Uno o mas properties estan incompletos o son invalidos.
@@ -22,6 +31,13 @@ export const generateProductErrorInfo = product =>{
     `
 }
 
+export const generateGetProductsErrorInfo = () =>{
+    return `
+    Problem at get products of data base
+    `
+}
+
+//TICKET ERRORS
 export const generateTicketErrorInfo = ticket =>{
     return `
     Uno o mas properties estan incompletos o son invalidos.
@@ -32,3 +48,7 @@ export const generateTicketErrorInfo = ticket =>{
         - purchaser: Must be a String (${ticket.purchaser})
     `
 }
+
+//CART ERRORS
+
+//MESAGE ERRORS

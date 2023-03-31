@@ -1,9 +1,19 @@
 import { MockService } from "../../repository/index.js";
+import EErrors from "../../services/errors/enumErrors.js";
+import { generateGetProductsErrorInfo } from "../../services/errors/info.js";
 
-export const getAll = async (req, res)=>{
+export const getAll = async (req, res) => {
     try {
         const products = MockService.getAll();
-        
+        if (!products) {
+            CustomError.createError({
+                name: "User creation error",
+                cause: generateGetProductsErrorInfo(),
+                message: 'Error trying to create user',
+                code: EErrors.PRODUCT_NOT_FOUND_ERROR
+            })
+        }
+
         const user = req.user?.user || {};
 
         return res.render('home', {
