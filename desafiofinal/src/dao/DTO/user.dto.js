@@ -1,5 +1,3 @@
-import { createHash } from "../../utils.js";
-import cartModel from "../mongo/models/cart.model.js";
 
 export default class UserDTO{
     constructor(user){

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { create, deleteProd, getAll, getOne, update } from '../dao/controllers/products.controller.js';
 import { authorization } from '../utils.js';
 
+
 const router = Router();
 
 router.get('/', getAll);

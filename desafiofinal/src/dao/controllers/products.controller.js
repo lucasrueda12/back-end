@@ -13,12 +13,14 @@ export const getAll = async (req, res) => {
 
         const products = await ProductService.getAll(limit, page, filter, sortQuery, sortQueryOrder);
         if (!products) {
-            CustomError.createError({
-                name: "Get Products error",
-                cause: generateGetProductsErrorInfo(),
-                message: 'Error trying to get all products',
-                code: EErrors.PRODUCT_NOT_FOUND_ERROR
-            })
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get Products error",
+                    cause: generateGetProductsErrorInfo(),
+                    message: 'Error trying to get all products',
+                    code: EErrors.PRODUCT_NOT_FOUND_ERROR
+                })
+            );
         }
 
         const user = req.user.user || {};
@@ -30,7 +32,7 @@ export const getAll = async (req, res) => {
             data: products.docs
         });
     } catch (error) {
-        console.log('ERROR: ', error);
+        req.logger.error('Error: ', error);
     }
 }
 
@@ -39,16 +41,18 @@ export const getOne = async(req, res)=>{
         const pid = req.params.pid;
         const prod = await ProductService.getOne(pid);
         if (!prod) {
-            CustomError.createError({
-                name: `Get product (id:${pid}) error`,
-                cause: generateGetProductsErrorInfo(),
-                message: 'Error trying to get product',
-                code: EErrors.PRODUCT_NOT_FOUND_ERROR
-            })
+            req.logger.error(
+                CustomError.createError({
+                    name: `Get product (id:${pid}) error`,
+                    cause: generateGetProductsErrorInfo(),
+                    message: 'Error trying to get product',
+                    code: EErrors.PRODUCT_NOT_FOUND_ERROR
+                })
+            );
         }
         res.send({ status: 'successful', payload: prod })
     } catch (error) {
-        console.log('ERROR: ', error);
+        req.logger.error('Error: ', error);
     }
 }
 
@@ -57,19 +61,21 @@ export const create = async(req, res)=>{
         const product = req.body;
         const productAdded = await ProductService.create(product);
         if (!productAdded) {
-            CustomError.createError({
-                name: `create product error`,
-                cause: generateProductErrorInfo(product),
-                message: 'Error trying to create product',
-                code: EErrors.CREATE_PRODUCT_ERROR
-            })
+            req.logger.error(
+                CustomError.createError({
+                    name: `create product error`,
+                    cause: generateProductErrorInfo(product),
+                    message: 'Error trying to create product',
+                    code: EErrors.CREATE_PRODUCT_ERROR
+                })
+            )
         }
         res.json({
             status: "Success",
             productAdded
         })
     } catch (error) {
-        console.log(error)
+        req.logger.error('Error: ', error);
         res.json({
             error
         })
@@ -82,16 +88,18 @@ export const update = async(req, res)=>{
         const update = req.body;
         const result = await ProductService.update(pid, update);
         if (!result) {
-            CustomError.createError({
-                name: `Update product (id:${pid}) error`,
-                cause: generateGetProductsErrorInfo(),
-                message: 'Error trying to update product',
-                code: EErrors.PRODUCT_NOT_FOUND_ERROR
-            })
+            req.logger.error(
+                CustomError.createError({
+                    name: `Update product (id:${pid}) error`,
+                    cause: generateGetProductsErrorInfo(),
+                    message: 'Error trying to update product',
+                    code: EErrors.PRODUCT_NOT_FOUND_ERROR
+                })
+            );
         }
         res.send({ status: 'successful', payload: result });
     } catch (error) {
-        console.log('ERROR: ', error);
+        req.logger.error('Error: ', error);
     }
 }
 
@@ -100,15 +108,17 @@ export const deleteProd = async(req, res)=>{
         const pid = req.params.pid;
         const result = await ProductService.delete(pid);
         if (!result) {
-            CustomError.createError({
-                name: `Delete product (id:${pid}) error`,
-                cause: generateGetProductsErrorInfo(),
-                message: 'Error trying to delete product',
-                code: EErrors.PRODUCT_NOT_FOUND_ERROR
-            })
+            req.logger.error(
+                CustomError.createError({
+                    name: `Delete product (id:${pid}) error`,
+                    cause: generateGetProductsErrorInfo(),
+                    message: 'Error trying to delete product',
+                    code: EErrors.PRODUCT_NOT_FOUND_ERROR
+                })
+            );
         }
         res.send({ status: 'successful', payload: result });
     } catch (error) {
-        console.log('ERROR: ', error);
+        req.logger.error('Error: ', error);
     }
 }

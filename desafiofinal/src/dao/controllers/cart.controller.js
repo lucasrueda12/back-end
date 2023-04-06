@@ -1,91 +1,223 @@
 import { CartService, TicketService } from "../../repository/index.js";
+import EErrors from "../../services/errors/enumErrors.js";
+import { generateGetCartsErrorInfo } from "../../services/errors/info.js";
 
 export const getAll = async (req, res) =>{
-    const carts = await CartService.getAll();
-    res.render('carts',
-    { 
-        titlePage: 'Carts',
-        style: 'cart.css',
-        carts
-    });
+    try {
+        const carts = await CartService.getAll();
+        if(!carts){
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to get Cart',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+            );
+        }
+        res.render('carts',
+        { 
+            titlePage: 'Carts',
+            style: 'cart.css',
+            carts
+        });
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 }
 
 export const getOne = async (req, res) =>{
-    const cid =  req.params.cid;
-    const cart = await CartService.getOne(cid);
-    return res.render('carts', {
-        titlePage: 'Cart',
-        style: 'cart.css',
-        carts: [cart]
-    });
+    try {
+        const cid =  req.params.cid;
+        const cart = await CartService.getOne(cid);
+        if(!cart){
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to get Cart',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+            );
+        }
+        return res.render('carts', {
+            titlePage: 'Cart',
+            style: 'cart.css',
+            carts: [cart]
+        });
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 }
 
 export const create = async (req, res) =>{
-    const createCart = await CartService.create();
-    res.send({status: 'successful', createCart});
+    try {
+        const createCart = await CartService.create();
+        if(!createCart){
+            req.logger.error(
+                CustomError.createError({
+                    name: "create carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to create cart',
+                    code: EErrors.CREATE_CART_ERROR
+                })
+            );
+        }
+        res.send({status: 'successful', createCart});
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 }
 
 export const addProduct = async (req, res) =>{
-    const cid = req.params.cid;
-    const pid = req.params.pid;
-    const quantity = req.body?.quantity || 1;
+    try {
+        const cid = req.params.cid;
+        const pid = req.params.pid;
+        const quantity = req.body?.quantity || 1;
+        
+        const result = await CartService.addProduct(cid, pid, quantity);
     
-    const result = await CartService.addProduct(cid, pid, quantity);
-
-    if(!result) return res.status(404).json({status: 'ERROR', error: 'cart not found'})
-
-    res.redirect(`/api/carts/${cid}`);
+        if(!result){
+            req.logger.error(
+                CustomError.createError({
+                    name: "create carts error",
+                    cause: generateAddProductInCartErrorInfo({cid, pid, quantity}),
+                    message: 'Error trying to create cart',
+                    code: EErrors.ADD_PRODUCT_IN_CART_ERROR
+                })
+            );
+        }
+    
+        res.redirect(`/api/carts/${cid}`);
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 
 }
 export const update = async (req, res) =>{
-    const newProducts= req.body;
-    const cid = req.params.cid;
-    const cart = await CartService.update(cid, newProducts);
-    if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
-    res.json({status: 'successful', cart})
+    try {
+        const newProducts= req.body;
+        const cid = req.params.cid;
+        const cart = await CartService.update(cid, newProducts);
+        if(!cart){
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to get Cart',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+            );
+        }        
+        res.json({status: 'successful', cart})
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 }
 export const updateProduct = async (req, res) =>{
-    const cid = req.params.cid;
-    const pid = req.params.pid;
-    const quantity = req.body?.quantity || 1;
-
-    const cart = await CartService.updateProduct(cid, pid, quantity);
-    res.json({status: 'successful', cart})
+    try {
+        const cid = req.params.cid;
+        const pid = req.params.pid;
+        const quantity = req.body?.quantity || 1;
+    
+        const cart = await CartService.updateProduct(cid, pid, quantity);
+        if(!cart){
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to get Cart',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+            );
+        }
+        res.json({status: 'successful', cart})
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 
 }
 export const deleteCart = async (req, res) =>{
-    const cid = req.params.cid;
-
-    const result = await CartService.deleteCart(cid);
-    if(!result) return res.status(404).json({status: 'ERROR', error: 'cart not found'})
-
-    res.json({status: 'delete successful', result});
+    try {
+        const cid = req.params.cid;
+        const result = await CartService.deleteCart(cid);
+        if(!result){
+            req.logger.error(
+                CustomError.createError({
+                    name: "create carts error",
+                    cause: generateAddProductInCartErrorInfo({cid}),
+                    message: 'Error trying to create cart',
+                    code: EErrors.ADD_PRODUCT_IN_CART_ERROR
+                })
+            );
+        }
+        res.json({status: 'delete successful', result});
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 }
 export const clearCart = async (req, res) =>{
-    const cid = req.params.cid;
-    const cart = await CartService.clearCart(cid);
-    if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
-    res.json({status: 'successful', cart})
+    try {
+        const cid = req.params.cid;
+        const cart = await CartService.clearCart(cid);
+        if(!cart){
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to get Cart',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+            );
+        }
+        res.json({status: 'successful', cart})
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 
 }
 export const deleteOneProduct = async (req, res) =>{
-    const cid = req.params.cid;
-    const pid = req.params.pid;
-    const cart = await CartService.deleteOneProduct(cid, pid);
-    if(!cart) return res.status(404).json({status: 'Error', error: 'cart not found'});
-    res.json({status: 'successful', cart})
+    try {
+        const cid = req.params.cid;
+        const pid = req.params.pid;
+        const cart = await CartService.deleteOneProduct(cid, pid);
+        if(!cart){
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to get Cart',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+            );
+        }
+        res.json({status: 'successful', cart})
+    } catch (error) {
+        req.logger.error('Error: ', error);
+    }
 }
 
 export const purchase = async (req, res) =>{
-    const cid = req.params.cid;
-    const status = await CartService.purchase(cid);
-    if (!status) return res.status(404).json({ status: 'Error', error: 'cart not found' });
-
-    await CartService.update(cid, status.noStock);
-    if(status.totalPrice>0){
-        const resultTocken = await TicketService.create(req.user.email, status.totalPrice);
-        status.tocken = resultTocken;
+    try {
+        const cid = req.params.cid;
+        const status = await CartService.purchase(cid);
+        if(!status){
+            req.logger.error(
+                CustomError.createError({
+                    name: "Get carts error",
+                    cause: generateGetCartsErrorInfo(),
+                    message: 'Error trying to get Cart',
+                    code: EErrors.CART_NOT_FOUND_ERROR
+                })
+            );
+        }
+        await CartService.update(cid, status.noStock);
+        if(status.totalPrice>0){
+            const resultTocken = await TicketService.create(req.user.email, status.totalPrice);
+            status.tocken = resultTocken;
+        }
+        res.json({status: 'successful', status});
+    } catch (error) {
+        req.logger.error('Error: ', error);
     }
-    res.json({status: 'successful', status});
 }
-

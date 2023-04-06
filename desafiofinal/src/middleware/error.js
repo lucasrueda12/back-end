@@ -31,8 +31,11 @@ export default (error, req, res, next) => {
         case EErros.USER_NOT_FOUND_ERROR:
             res.status(404).send({ status: 'error', error: error.name, cause: error.cause })
             break;
+            case EErros.CREATE_CART_ERROR:
+                res.status(404).send({ status: 'error', error: error.name, cause: error.cause })
+                break;
         default:
-            res.send({ status: 'error', error: 'Unhandled error' })
+            res.send({ status: 'error', error: 'Unhandled error' }) // salta error si tengo carpeta utils
             break;
     }
 }

@@ -8,6 +8,7 @@ const EErrors = {
     ADD_PRODUCT_IN_CART_ERROR: 7,
     USER_NOT_FOUND_ERROR:11,
     CREATE_USER_ERROR: 12,
+    CREATE_CART_ERROR:13,
 }
 
 export default EErrors;

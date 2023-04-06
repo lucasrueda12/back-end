@@ -37,6 +37,29 @@ export const generateGetProductsErrorInfo = () =>{
     `
 }
 
+export const generateGetCartsErrorInfo = () =>{
+    return `
+    Problem at get carts of data base
+    `
+}
+
+export const generateAddProductInCartErrorInfo = req => {
+    return `
+    Uno o mas properties estan incompletos o son invalidos.
+    Lista de properties obligatgories:
+        - CART ID: Must be a string. (${req.cid})
+        - PRODUCT ID: Must be a string. (${req.pid})
+        - QUANTITY : Must be a string. (${req.quantity})
+    `
+}
+export const generateDeleteCartErrorInfo = req => {
+    return `
+    Uno o mas properties estan incompletos o son invalidos.
+    Lista de properties obligatgories:
+        - CART ID: Must be a string. (${req.cid})
+    `
+}
+
 //TICKET ERRORS
 export const generateTicketErrorInfo = ticket =>{
     return `

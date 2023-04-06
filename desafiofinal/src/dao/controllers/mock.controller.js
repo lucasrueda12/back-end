@@ -6,14 +6,15 @@ export const getAll = async (req, res) => {
     try {
         const products = MockService.getAll();
         if (!products) {
-            CustomError.createError({
-                name: "User creation error",
-                cause: generateGetProductsErrorInfo(),
-                message: 'Error trying to create user',
-                code: EErrors.PRODUCT_NOT_FOUND_ERROR
-            })
+            req.logger.error(
+                CustomError.createError({
+                    name: "User creation error",
+                    cause: generateGetProductsErrorInfo(),
+                    message: 'Error trying to create user',
+                    code: EErrors.PRODUCT_NOT_FOUND_ERROR
+                })
+            );
         }
-
         const user = req.user?.user || {};
 
         return res.render('home', {
@@ -23,7 +24,7 @@ export const getAll = async (req, res) => {
             data: products
         });
     } catch (error) {
-        console.log('ERROR: ', error);
+        req.logger.error('Error: ', error);
     }
 }
 
