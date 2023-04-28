@@ -3,9 +3,9 @@ import { dirname } from 'path';
 import bcrypt, { hashSync } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { PRIVATE_KEY, JWT_COOKIE_NAME } from './config/credentials.js';
-import UserDTO from './dao/DTO/user.dto.js';
+import config from './config/config.js';
 import { faker } from '@faker-js/faker'
+import nodemailer from 'nodemailer'
 
 faker.locale = 'es'
 const __filename = fileURLToPath(import.meta.url)
@@ -13,20 +13,29 @@ const __dirname = dirname(__filename)
 
 export default __dirname
 
+//transport email
+export const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.email,
+        pass: config.pass
+    }
+})
+
 //genera el jwt Token
 export const generateToken = user => {
-    const token = jwt.sign({ user }, PRIVATE_KEY, { expiresIn: '24h' });
-    console.log(token);
+    const token = jwt.sign({ user }, config.private_key, { expiresIn: '30m' });
     return token;
 }
 
 // recoje el token de la cookie y ve si existe y si esta autorizado
 export const authToken = (req, res, next) => {
-    const token = req.cookies[JWT_COOKIE_NAME];
+    const token = req.cookies[config.jwt_cookie_name];
 
     if (!token) return res.status(401).render('errors/base', { error: "Not Auth" });
 
-    jwt.verify(token, PRIVATE_KEY, (error, credentials) => {
+    jwt.verify(token, config.private_key, (error, credentials) => {
         if (error) return res.status(403).render('errors/base', { error: "Not authorizad" })
 
         req.user = credentials.user;
@@ -34,9 +43,18 @@ export const authToken = (req, res, next) => {
     })
 }
 
+export const validateTokenAndGetID = (req, res, next) => {
+    const token = req.params.jwt;
+    jwt.verify(token, config.private_key, (error, credentials) => {
+        if (error) return res.render('session/restore', { message: "token expired" })
+        req.id = credentials.user;
+        next();
+    })
+}
+
 //extrae la cookie
 export const extractCookie = req => {
-    return (req && req.cookies) ? req.cookies[JWT_COOKIE_NAME] : null;
+    return (req && req.cookies) ? req.cookies[config.jwt_cookie_name] : null;
 }
 
 // Crea una password
@@ -46,6 +64,16 @@ export const createHash = password => {
 
 export const isValidPassword = (user, password) => {
     return bcrypt.compareSync(password, user.password);
+}
+
+export const passwordFormatIsValid = (password)=>{
+    const message = {};
+    if(password.length < 8) message.large = "Debe tener como minimo 8 caracteres.";
+    if(!(/[A-Z]/.test(password))) message.mayus = "Debe contener al menos una mayuscula.";
+    if(!(/[0-9]/.test(password))) message.number = "Debe contener algun numero.";
+
+    return message;
+
 }
 
 // PASSPORT CALL
@@ -63,11 +91,11 @@ export const passportCall = (strategy) => {
 }
 
 // VALIDATE AUTHORIZATION
-export const authorization = (role) => {
+export const authorization = (prole) => {
     return async (req, res, next) => {
         const user = req.user.user;
         if (!user) return res.status(401).send({ error: "Unauthorized" });
-        if (user.role != role) return res.status(403).send({ error: 'No Permission' })
+        if (user.role != prole) return res.status(403).send({ error: 'No Permission' })
         next();
     }
 }

@@ -1,11 +1,10 @@
 import config from "../config/config.js";
 import mongoose from "mongoose";
 
-export default {};
+export let User;
+export let Product;
 export let Cart;
 export let Message;
-export let Product;
-export let User;
 export let Ticket;
 
 console.log(`PERSISTENCE: ${config.persistence}`);
@@ -18,26 +17,26 @@ switch (config.persistence) {
             dbName: config.mongo_db_name
         }, () => console.log('Mongo connected'));
         
-        const { default: UserMongo } = import('./mongo/user.mongo.js')
-        const { default: ProductMongo } = import('./mongo/product.mongo.js')
-        const { default: CartMongo } = import('./mongo/cart.mongo.js')
-        const { default: MessageMongo } = import('./mongo/message.mongo.js')
-        const { default: TicketMongo } = import('./mongo/ticket.mongo.js');
+        const { default: UserMongo } = await import('./mongo/user.mongo.js')
+        const { default: ProductMongo } =await import('./mongo/product.mongo.js')
+        const { default: CartMongo } =await import('./mongo/cart.mongo.js')
+        const { default: MessageMongo } =await import('./mongo/message.mongo.js')
+        const { default: TicketMongo } =await import('./mongo/ticket.mongo.js');
 
-        Ticket = TicketMongo;
-        Product = ProductMongo;
-        Message = MessageMongo;
-        Cart = CartMongo;
         User = UserMongo;
+        Product = ProductMongo;
+        Cart = CartMongo;
+        Message = MessageMongo;
+        Ticket = TicketMongo;
 
         break;
     case 'MEMORY':
         console.log('Persistence with Memory');
-        const { default: UserFile } = import('./memory/user.memory.js')
-        const { default: ProductFile } = import('./memory/products.memory.js')
-        const { default: CartFile } = import('./memory/cart.memory.js')
-        const { default: MessageFile } = import('./memory/message.memory.js')
-        const { default: TicketFile } = import('./memory/ticket.memory.js');
+        const { default: UserFile } =await import('./memory/user.memory.js')
+        const { default: ProductFile } =await import('./memory/products.memory.js')
+        const { default: CartFile } =await import('./memory/cart.memory.js')
+        const { default: MessageFile } =await import('./memory/message.memory.js')
+        const { default: TicketFile } =await import('./memory/ticket.memory.js');
         
         Ticket = TicketFile;
         Product = ProductFile;

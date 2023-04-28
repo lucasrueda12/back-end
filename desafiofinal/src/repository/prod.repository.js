@@ -1,12 +1,13 @@
 import ProductDTO from "../dao/DTO/products.dto.js";
 
 export default class ProductRepository {
-    constructor(dao) {
-        this.dao = dao
+    constructor(daox) {
+        this.dao = daox;
     }
 
     getAll = async (limit, page, filter, sortQuery, sortQueryOrder) => {
         try {
+
             const search = {}
             if (filter) {
                 search.title = filter

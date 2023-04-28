@@ -1,10 +1,11 @@
 {
-  "name": "1era-entrega-proyecto-final",
+  "name": "entrega-proyecto-final",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "nodemon src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -24,12 +25,14 @@
     "mongoose": "^6.8.4",
     "mongoose-paginate-v2": "^1.7.1",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
     "nodemon": "^2.0.21",
     "passport": "^0.6.0",
     "passport-github2": "^0.1.12",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "socket.io": "^4.5.4",
+    "twilio": "^4.10.0",
     "uuid": "^9.0.0",
     "winston": "^3.8.2"
   }

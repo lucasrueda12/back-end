@@ -1,8 +1,8 @@
 export default class TicketDTO{
-    construct(ticket){
+    constructor(ticket){
         this.code = ticket.code;
+        this.purchase_datetime = ticket.date;
         this.amount = ticket.amount;
         this.purchaser = ticket.email;
-        this.date = ticket.date;
     }
 }

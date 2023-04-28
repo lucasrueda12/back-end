@@ -1,7 +1,7 @@
 
-const addcart = async (id) => {
+/* const addcart = async (cart, id) => {
     console.log(id);
-    const response = await fetch(`http://127.0.0.1:8080/api/carts/63d438f59e8c761549334454/products/${id}`, {
+    const response = await fetch(`http://127.0.0.1:8080/api/carts/${cart}/products/${id}`, {
         method: "POST",
         headers: {
             'Accept': 'application/json',
@@ -15,4 +15,4 @@ const addcart = async (id) => {
     } else {
         alert("Error no se pudo agregar el producto")
     }
-}
+} */

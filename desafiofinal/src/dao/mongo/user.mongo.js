@@ -1,9 +1,9 @@
 import userModel from "./models/user.model.js";
 
-export default class User{
-    constructor(){}
+export default class User {
+    constructor() { }
 
-    getAll = async()=>{
+    getAll = async () => {
         try {
             const users = await userModel.find().lean().exec();
             return users;
@@ -12,7 +12,7 @@ export default class User{
         }
     }
 
-    getOne = async(id) =>{
+    getOne = async (id) => {
         try {
             const user = await userModel.findById(id).lean().exec();
             return user;
@@ -21,9 +21,18 @@ export default class User{
         }
     }
 
-    create = async(newUser)=>{
+    getByEmail = async (email) => {
         try {
-            const user = await userModel.findOne({name: newUser.name});
+            const user = await userModel.findOne({ email: email }).lean().exec();
+            return user;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    create = async (newUser) => {
+        try {
+            const user = await userModel.findOne({ name: newUser.name });
             if (user) return user;
             const result = await userModel.create(newUser);
             return result;
@@ -32,10 +41,19 @@ export default class User{
         }
     }
 
-    update = async(id, updUser)=>{
+    update = async (id, updUser) => {
         try {
-            const user = await userModel.findById(id);
-            const result = await userModel.updateOne({name: user.name}, updUser);
+            const result = await userModel.findOneAndUpdate(
+                { _id: id }, // Busca el usuario con este email
+                { password: updUser.password }, // Actualiza el campo "name" con este valor
+                { new: true } // Devuelve el documento actualizado en lugar del original
+            )
+                .then(updatedUser => {
+                    console.log('Usuario actualizado:', updatedUser);
+                })
+                .catch(error => {
+                    console.error('Error al actualizar usuario:', error);
+                });
             return result;
         } catch (error) {
             console.log('Error in update mongo: ' + error);

@@ -21,6 +21,14 @@ export default class UserRepository {
         }
     }
 
+    getByEmail = async(email)=>{
+        try {
+            return await this.dao.getByEmail(email);
+        } catch (error) {
+            console.log('User not found');
+        }
+    }
+
     create = async (user) =>{
         try {
             const userToInsert = new UserDTO(user);
@@ -31,9 +39,9 @@ export default class UserRepository {
         }
     }
 
-    update = async (id, user)=>{
+    update = async (id, newUser)=>{
         try {
-            const userToInsert = new UserDTO(user);
+            const userToInsert = new UserDTO(newUser);
             const result = await this.dao.update(id, userToInsert);
             return result;
         } catch (error) {

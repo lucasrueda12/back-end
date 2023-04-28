@@ -1,6 +1,5 @@
-import { ProductService } from "../../repository/index.js";
 import cartModel from "./models/cart.model.js";
-
+import prodModel from "./models/products.model.js";
 export default class Cart {
     constructor() { }
 
@@ -15,10 +14,10 @@ export default class Cart {
 
     getOne = async (id) => {
         try {
-            const cart = await cartModel.findById(id).populate('products.id');
+            const cart = await cartModel.findById(id).populate('products.id').lean().exec();
             return cart;
         } catch (error) {
-            console.log('cart not found');
+            console.log('cart not found mongo' + error);
         }
     }
 
@@ -38,11 +37,11 @@ export default class Cart {
             if (idx != -1) {
                 cart.products[idx].quantity = quantity;
             } else {
-                cart.products.push({ id: prodID, quantity: quantity })
+                cart.products.push({id: pid, quantity: quantity});
             }
             return await cart.save();
         } catch (error) {
-            console.log('Error cart not found');
+            console.log('Error cart not found', error);
         }
     }
 
@@ -108,24 +107,25 @@ export default class Cart {
 
     purchase = async (cid) => {
         try {
-            const cart = await CartService.getOne(cid);
-
+            const cart = await this.getOne(cid);
             let totalPrice = 0;
             const noStock = [];
             const comparation = cart.products;
+            console.log(comparation);
             comparation.map(async p => {
-                if (p.id.stock >= p.quantity) {
+                if (p.id.stock >= p.quantity){
                     p.id.stock -= p.quantity;
-                    await ProductService.update(p.id._id, p.id);
                     totalPrice += p.id.price * p.quantity;
+                    await prodModel.findByIdAndUpdate({_id: p.id._id}, p.id);
                 } else {
                     noStock.push(p.id);
                 }
             });
-
+            console.log(totalPrice);
+            console.log(noStock);
             return {noStock, totalPrice};
-        } catch (error) {
-            console.log('Cart not found');
+        }catch (error) {
+            console.log('Cart not found mongo:' + error);
         }
     }
 }

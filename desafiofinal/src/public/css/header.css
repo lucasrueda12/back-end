@@ -10,13 +10,14 @@
 header{
     text-decoration: none;
     width: 100%;
-    height: 60px;
-    background-color: #2a3942;
 }
 
 header nav{
-    height: 100%;
-    width: 100%;
+    margin: 20px;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 7px 13px 37px #000;
+    background-color: #2a3942;
 }
 
 header nav ul{

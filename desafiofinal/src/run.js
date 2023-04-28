@@ -33,7 +33,7 @@ const run = (io, app)=>{
 
     app.use(ErrorHandler);
     app.get('/', (req, res) => {
-        res.redirect('/session/register');
+        res.redirect('/session/login');
     });
 }
 

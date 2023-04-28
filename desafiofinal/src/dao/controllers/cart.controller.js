@@ -43,7 +43,7 @@ export const getOne = async (req, res) =>{
         return res.render('carts', {
             titlePage: 'Cart',
             style: 'cart.css',
-            carts: [cart]
+            cart
         });
     } catch (error) {
         req.logger.error('Error: ', error);
@@ -200,11 +200,13 @@ export const deleteOneProduct = async (req, res) =>{
 export const purchase = async (req, res) =>{
     try {
         const cid = req.params.cid;
+        const user = req.user.user;
+        console.log(user);
         const status = await CartService.purchase(cid);
         if(!status){
             req.logger.error(
                 CustomError.createError({
-                    name: "Get carts error",
+                    name: "error ticket",
                     cause: generateGetCartsErrorInfo(),
                     message: 'Error trying to get Cart',
                     code: EErrors.CART_NOT_FOUND_ERROR
@@ -213,7 +215,7 @@ export const purchase = async (req, res) =>{
         }
         await CartService.update(cid, status.noStock);
         if(status.totalPrice>0){
-            const resultTocken = await TicketService.create(req.user.email, status.totalPrice);
+            const resultTocken = await TicketService.create(user.email, status.totalPrice);
             status.tocken = resultTocken;
         }
         res.json({status: 'successful', status});

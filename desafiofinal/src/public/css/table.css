@@ -9,6 +9,7 @@
     border-radius: 5px 5px 0 0;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    background-color: #111b21;
 }
 
 .table-cart thead tr {
@@ -24,11 +25,12 @@
 }
 
 .table-cart tbody tr {
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid #202c33;
+    color: #ffffff;
 }
 
 .table-cart tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
+    background-color: #202c33;
     font-weight: bold;
     color: #009879;
 }

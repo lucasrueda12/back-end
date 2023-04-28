@@ -24,7 +24,7 @@ export const getAll = async (req, res) => {
         }
 
         const user = req.user.user || {};
-
+        console.log(user);
         return res.render('home', {
             user,
             role: (user?.role == 'admin'),

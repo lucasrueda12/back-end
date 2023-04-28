@@ -17,7 +17,7 @@ export default class CartRepository {
         try {
             return await this.dao.getOne(id);
         } catch (error) {
-            console.log('cart not found');
+            console.log('cart not found repository:' + error);
         }
     }
 
@@ -85,7 +85,7 @@ export default class CartRepository {
         try {
             return await this.dao.purchase(cid);
         } catch (error) {
-            console.log('Error to purchase service: ' + error);
+            console.log('Error repository to purchase service: ' + error);
         }
     }
 }

@@ -23,11 +23,15 @@ export default class TicketRepository {
     }
 
     create = async (email, amount)=>{
-        try {
-            const ticketToInsert = TicketDTO({email, amount, code: uuidv4(), date: Date.now });
+        try {            
+            const ticketToInsert = new TicketDTO({email: email,
+                                                    amount: amount,
+                                                    code: uuidv4(),
+                                                    date: new Date(Date.now())
+                                                });
             return await this.dao.create(ticketToInsert);
         } catch (error) {
-            console.log('Error to create ticket service');
+            console.log('Error to create ticket repository');
         }
     }
 }

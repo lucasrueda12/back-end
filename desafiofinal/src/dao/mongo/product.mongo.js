@@ -1,7 +1,7 @@
 import prodModel from "./models/products.model.js";
 
-export default class Product {
-    constructor() { }
+export default class Product{
+    constructor(){}
 
     getAll = async (search, options) => {
         try {

@@ -58,7 +58,7 @@
                 <td>{{stock}}</td>
                 <td>{{category}}</td>
                 <td>
-                    <form class="send-cart" action="/api/carts/63d438f59e8c761549334454/products/{{_id}}" method="post">
+                    <form class="send-cart" action="/api/carts/{{../user.cart}}/products/{{_id}}" method="post">
                         <input class="botons" type="submit">
                     </form>
                 </td>
@@ -67,5 +67,5 @@
         </tbody>
     </table>
 </div>
-<script src="/js/home.js"></script>
+{{!-- <script src="/js/home.js"></script> --}}
 <link rel="stylesheet" href="/css/{{style}}">

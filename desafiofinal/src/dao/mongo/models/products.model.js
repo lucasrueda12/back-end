@@ -10,7 +10,14 @@ const productSchema = new mongoose.Schema({
     status: Boolean,
     stock: Number,
     category: String,
-    thumbnails: Array
+    thumbnails: Array,
+    owner: {
+        creator: { type: String, default: 'admin' },
+        id:{ 
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'users'
+        }
+    }
 });
 
 productSchema.plugin(mongoosePaginate);

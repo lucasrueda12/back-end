@@ -9,7 +9,7 @@ import userModel from '../dao/mongo/models/user.model.js';
 import cartModel from '../dao/mongo/models/cart.model.js';
 
 import { createHash, extractCookie, generateToken, isValidPassword } from '../utils.js';
-import { PRIVATE_KEY } from "./credentials.js";
+import config from './config.js';
 //jwt
 const JWTStrategy = jwt.Strategy;
 const ExtractJWT = jwt.ExtractJwt;
@@ -17,12 +17,11 @@ const ExtractJWT = jwt.ExtractJwt;
 //local
 const LocalStrategy = local.Strategy;
 const initializePassport = () => {
-
     passport.use('register', new LocalStrategy({
         passReqToCallback: true,
         usernameField: 'email'
     }, async (req, username, password, done) => {
-        const { first_name, last_name, email, age } = req.body;
+        const { first_name, last_name, email, age, role } = req.body;
         try {
             const user = await userModel.findOne({ email: username })
             if (user) {
@@ -30,16 +29,15 @@ const initializePassport = () => {
                 return done(null, false);
             }
 
-            
             const newUser = {
                 first_name,
                 last_name,
                 email,
                 age,
                 password: createHash(password),
-                cart: await cartModel.create({})
+                cart: (await cartModel.create({}))._id,
+                role
             }
-
             if (newUser.email == 'adminCoder@coder.com' && password == 'coderAdmin') { (newUser.role = 'admin') };
 
             const result = await userModel.create(newUser);
@@ -55,19 +53,22 @@ const initializePassport = () => {
         usernameField: 'email',
     }, async (username, password, done) => {
         try {
+            console.log("entre");
             const user = await userModel.findOne({ email: username }).lean().exec();
             if (!user) {
                 console.log('User dont exist');
                 return done(null, user);
             }
 
-            if (!isValidPassword(user, password)) return done(null, false);
+            if (!isValidPassword(user, password)) {
+                return done(null, false)
+            };
 
             //genera el token del jwt
             const token = generateToken(user);
 
             user.token = token;
-
+            console.log(user);
             return done(null, user);
         } catch (error) {
             return done(' [LOCAL] Error al obtener user' + error)
@@ -83,8 +84,8 @@ const initializePassport = () => {
         console.log(profile);
 
         try {
-            const user = await userModel.findOne({ email: profile._json.email });
-            console.log('traigo user' ,user);
+            const user = await userModel.findOne({ email: profile.emails[0].value });
+            console.log('traigo user', user);
             if (user) {
                 const token = generateToken(user);
                 user.token = token;
@@ -96,11 +97,10 @@ const initializePassport = () => {
                 last_name: '',
                 email: profile.emails[0].value,
                 age: profile._json.age,
-                password: '', 
-                cart: await cartModel.create({}),
+                password: createHash('abcd1234xyz'),
+                cart: (await cartModel.create({}))._id,
                 role: 'user'
             })
-
             const token = generateToken(newUser);
 
             newUser.token = token;
@@ -115,8 +115,8 @@ const initializePassport = () => {
 
     passport.use('jwt', new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromExtractors([extractCookie]),
-        secretOrKey: PRIVATE_KEY,
-    }, async(jwt_payload, done)=>{
+        secretOrKey: config.private_key,
+    }, async (jwt_payload, done) => {
         try {
             // returna el user
             return done(null, jwt_payload);

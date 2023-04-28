@@ -1,13 +1,16 @@
-<div class="container log">
+<div class="container">
 
     <div class="form-container">
-        <h1>User Login</h1>
+        <h1>Log in</h1>
         <form action="/session/login" method="post">
             <label for="email">email</label>
-            <input class="controls" id="email" type="text" name="email" placeholder="Enter your email">
+            <input class="controls" id="email" type="text" name="email" required placeholder="Enter your email">
 
             <label for="password">password</label>
-            <input class="controls" type="text" name="password" id="password" placeholder="Enter your password">
+            <input class="controls" type="password" name="password" required id="password" placeholder="Enter your password">
+            <p>
+                <a href="/session/sendrestore">Forgot your password?</a>
+            </p>
 
             <input class="botons" type="submit" value="login">
             <p>
