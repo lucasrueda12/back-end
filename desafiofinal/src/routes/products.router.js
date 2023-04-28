@@ -9,10 +9,10 @@ router.get('/', getAll);
 
 router.get('/:pid', getOne);
 
-router.post("/", authorization('admin'), create);
+router.post("/", authorization(['admin', 'premium']), create);
 
-router.put('/:pid', authorization('admin'), update);
+router.put('/:pid', authorization(['admin', 'premium']), update);
 
-router.delete('/:pid', authorization('admin'), deleteProd);
+router.delete('/:pid', authorization(['admin', 'premium']), deleteProd);
 
 export default router;

@@ -59,7 +59,13 @@ export const getOne = async(req, res)=>{
 export const create = async(req, res)=>{
     try {
         const product = req.body;
+        const user = req.user.user;
+        product.owner = {
+            role: user.role,
+            id: user._id
+        }
         const productAdded = await ProductService.create(product);
+
         if (!productAdded) {
             req.logger.error(
                 CustomError.createError({
@@ -106,7 +112,9 @@ export const update = async(req, res)=>{
 export const deleteProd = async(req, res)=>{
     try {
         const pid = req.params.pid;
-        const result = await ProductService.delete(pid);
+        const user = req.user.user;
+
+        const result = await ProductService.deleteByOwner(pid, user);
         if (!result) {
             req.logger.error(
                 CustomError.createError({

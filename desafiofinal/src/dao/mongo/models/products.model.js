@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
     category: String,
     thumbnails: Array,
     owner: {
-        creator: { type: String, default: 'admin' },
+        role: { type: String, default: 'admin' },
         id:{ 
             type: mongoose.Schema.Types.ObjectId,
             ref: 'users'

@@ -65,4 +65,16 @@ export default class ProductRepository {
             console.log('Error to delete service: ' + error);
         }
     }
+
+    delete = async(pid, owner)=>{
+        try {
+            const prod = await this.getOne(pid);
+            if(prod.owner.role == owner.role || "admin" == owner.role){
+                if(prod.owner.id != owner._id) return null;
+                return await this.dao.delete(pid);
+            }
+        } catch (error) {
+            console.log('Error to delete service: ' + error);
+        }
+    }
 }
