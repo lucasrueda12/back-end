@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import { Server } from "socket.io";
 //vista
 import handlebars from "express-handlebars"
+import swaggerJSDoc from 'swagger-jsdoc';
+
 // cookie
 import cookieParser from "cookie-parser";
 //sessions
@@ -20,8 +22,22 @@ import config from "./config/config.js";
 import __dirname from './utils.js';
 import run from "./run.js";
 
+
+
 const app = express();
 
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: "Documentation Wsp MarketPlace API",
+            description: "This proyect is based on Whatsapp and Facebook marketPlace para unir lo mejor de los dos mundos"
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJSDoc(swaggerOptions);
 // config engine templates
 //handlebars 
 /*
@@ -96,7 +112,7 @@ const env = () => {
     const io = new Server(httpServer);
 
     // funcion importada con todos los routes
-    run(io, app);
+    run(io, app, specs);
     //MongoSingleton.getInstance(app);
 }
 

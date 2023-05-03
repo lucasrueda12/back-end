@@ -1,5 +1,4 @@
 //routes
-
 import realTimeProductsRouter from './routes/realTimeProducts.router.js';
 import cartRouter from './routes/carts.router.js';
 import chatRouter from './routes/chat.router.js';
@@ -13,9 +12,13 @@ import { authorization, passportCall } from './utils.js';
 import ErrorHandler from './middleware/error.js'
 import { addLogger } from './logger.js';
 
-const run = (io, app)=>{
+import swaggerUiExpress from 'swagger-ui-express'
+
+
+const run = (io, app, specs)=>{
     // middleware
     // enviamos el socket por peticion
+    
     app.use((req, res, next) =>{
         req.io = io;
         next();
@@ -23,6 +26,7 @@ const run = (io, app)=>{
     app.use(addLogger); // + da informacion de la ruta en la que estoy
     
     // routes
+    app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
     app.use('/products', passportCall('jwt'), prodRouter);
     app.use('/api/realtimeproducts', passportCall('jwt'), realTimeProductsRouter);
     app.use('/api/carts', passportCall('jwt'), cartRouter);
