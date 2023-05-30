@@ -24,8 +24,7 @@ router.post('/register', passport.authenticate('register', { failureRedirect: '/
 });
 
 router.get('/failregister', (req, res) => {
-    console.log('Fail Strategy register');
-    res.send({ error: 'Failed' });
+    res.render('session/register');
 })
 
 //vista de login
@@ -45,8 +44,7 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
 })
 
 router.get('/faillogin', (req, res) => {
-    console.log('Fail Strategy login');
-    res.send({ error: 'Fail login' });
+    res.render('session/login');
 })
 
 router.get(
@@ -89,16 +87,10 @@ router.post('/restore', async(req, res) => {
     const message = passwordFormatIsValid(password);
     if(Object.keys(message).length != 0) return res.render('session/changepass', { message: Object.values(message).join(' '), value: password });
     const user = req.cookies['user'];
-    console.log("usuario viejo: ",user);
     const passwordRepite = isValidPassword(user, password);
-
-    console.log(passwordRepite);
     if(passwordRepite) return res.render('session/changepass', { message: 'La contraseña no puede ser la misma', value: password});
-
     user.password = createHash(password);
-    console.log("user nuevo: ",user);
     const result = await UserService.update(user._id, user);
-
     res.clearCookie('user').redirect('login');
 });
 
@@ -108,11 +100,10 @@ router.get('/sendrestore', (req, res) => {
 
 router.post('/sendrestore', async (req, res) => {
     const email = req.body.email;
-    const user = await UserService.getByEmail(email);
+    const user = await UserService.getBy(email);
 
     if(!user) return res.render('session/restore', { message: 'User not register'})
 
-    console.log(user);
     const jwt = generateToken(user._id);
     const result = await transport.sendMail({
         from: 'lucasrueda64@gmail.com',
@@ -206,21 +197,6 @@ router.post('/sendrestore', async (req, res) => {
     })
 
     res.render('session/mailsend');
-})
-
-router.get('/private', passportCall('jwt'), authorization('user'), (req, res)=>{
-    res.send({status: 'success', payload: req.user, role: 'user'});
-});
-
-router.get('/secret', passportCall('jwt'), authorization('admin'), (req, res)=>{
-    res.send({status: 'success', payload: req.user, role: 'ADMIN'});
-});
-
-router.get('/current', passportCall('jwt'), authorization('user'), (req, res)=>{
-    console.log('get: ', UserDTO(req.user.user).getCurrent());
-    res.render('session/profile', {
-        user: UserDTO(req.user.user).getCurrent()
-    })
 })
 
 export default router;

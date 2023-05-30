@@ -6,6 +6,7 @@ import prodRouter from './routes/products.router.js';
 import sessionRouter from './routes/session.router.js';
 import mockRouter from './routes/mock.router.js';
 import loggerRouter from './routes/logger.router.js';
+import userRouter from './routes/users.router.js';
 //Midlewares
 
 import { authorization, passportCall } from './utils.js';
@@ -26,11 +27,12 @@ const run = (io, app, specs)=>{
     app.use(addLogger); // + da informacion de la ruta en la que estoy
     
     // routes
-    app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
+    app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
     app.use('/products', passportCall('jwt'), prodRouter);
     app.use('/api/realtimeproducts', passportCall('jwt'), realTimeProductsRouter);
     app.use('/api/carts', passportCall('jwt'), cartRouter);
     app.use('/api/chat', passportCall('jwt'), chatRouter);
+    app.use('/api/users', userRouter);
     app.use('/session', sessionRouter);
     app.use('/mockingproducts', mockRouter);
     app.use('/loggerTest', loggerRouter);
