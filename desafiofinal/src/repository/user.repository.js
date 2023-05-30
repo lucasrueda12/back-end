@@ -48,4 +48,18 @@ export default class UserRepository {
             console.log('Error in update service: ' + error);
         }
     }
+
+    addDocs = async (id, docName, path)=>{
+        try {
+            const user = await this.dao.getOne(id);
+            const idx = user.documents.findIndex( doc => doc.name == docName);
+            if(idx != -1) {
+                return this.dao.updateDoc(id, idx, docName, path);
+            }else{
+                return await this.dao.addDoc(id, docName, path);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
